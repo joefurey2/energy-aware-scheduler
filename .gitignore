@@ -1,0 +1,33 @@
+# Ignore compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore Go binaries
+*.o
+*.a
+
+# Ignore Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore YAML Kubernetes files
+*.yaml
+*.yml
+
+# Ignore certificates
+*.crt
+*.pem
+*.key
+*.csr
+
+
+# Ignore config
+*.conf
+
