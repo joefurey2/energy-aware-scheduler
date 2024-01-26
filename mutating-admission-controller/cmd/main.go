@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 // Any path not specified be handled by this function
@@ -47,9 +48,16 @@ func main() {
 	mux.HandleFunc("/", handleRoot)
 	mux.HandleFunc("/mutate", handleMutate)
 
+	s := &http.Server {
+		Addr:           ":8443",
+		Handler: 	  	mux,
+		ReadTimeout:   	10 * time.Second,
+		WriteTimeout: 	10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
 
-	log.Println("Listing for requests at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Println("Listing for requests at http://localhost:8443")
+	log.Fatal(s.ListenAndServeTLS("./ssl/mutating-admission-controller.pem", "./ssl/mutating-admission-controller.key" ))
 
 }
 

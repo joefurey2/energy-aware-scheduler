@@ -17,10 +17,6 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Ignore YAML Kubernetes files
-*.yaml
-*.yml
-
 # Ignore certificates
 *.crt
 *.pem
