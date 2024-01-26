@@ -1,8 +1,8 @@
 #! /bin/sh
 set -o errexit
 
-export APP="${1:-mutateme}"
-export NAMESPACE="${2:-default}"
+export APP="mutating-admission-controller"
+export NAMESPACE="default"
 export CSR_NAME="${APP}.${NAMESPACE}.svc"
 
 echo "... creating ${app}.key"
@@ -35,7 +35,7 @@ kubectl delete csr ${CSR_NAME} || :
 echo "... creating kubernetes CSR object"
 echo "kubectl create -f -"
 kubectl create -f - <<EOF
-apiVersion: certificates.k8s.io/v1beta1
+apiVersion: certificates.k8s.io/v1
 kind: CertificateSigningRequest
 metadata:
   name: ${CSR_NAME}
@@ -46,7 +46,8 @@ spec:
   usages:
   - digital signature
   - key encipherment
-  - server auth
+  - client auth
+  signerName: kubernetes.io/kube-apiserver-client
 EOF
 
 SECONDS=0
