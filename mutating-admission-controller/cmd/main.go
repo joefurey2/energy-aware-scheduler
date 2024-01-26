@@ -39,7 +39,6 @@ func handleMutate(w http.ResponseWriter, req *http.Request) {
 }
 
 
-
 func main() {
 
 	log.Println("Starting server...")
