@@ -1,4 +1,5 @@
-# Webhook configuration to be forward submission requests upon pod creation
+# A webhook configuration to forward all pod creation requests to the controller
+
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
@@ -23,7 +24,7 @@ webhooks:
     admissionReviewVersions: ["v1"]
     timeoutSeconds: 5
     reinvocationPolicy: Never
-    failurePolicy: Fail # Set to fail for better debugging
+    failurePolicy: Fail  # Fail for better debugging - do we want ignore in prod?
     namespaceSelector:
       matchLabels:
         MAC: enabled
