@@ -12,6 +12,7 @@ import (
 // Any path not specified be handled by this function
 // Prevents XSS attacks and other errors
 func handleRoot(w http.ResponseWriter, req *http.Request) {
+	log.Println("Root request!")
 	fmt.Fprint(w, "hello %q", html.EscapeString(req.URL.Path))
 }
 
@@ -29,10 +30,11 @@ func handleMutate(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	log.Println(string(body))
+	log.Println(body)
 	
 	// Modify the body to say "mutated"
 	body = []byte("mutated")
+	log.Println("mutated!!")
 
 	// Send back mutated admission controller
 	w.WriteHeader(http.StatusOK)

@@ -26,7 +26,8 @@ DNS.3 = ${CSR_NAME}
 DNS.4 = ${CSR_NAME}.cluster.local
 EOF
 echo "openssl req -new -key ${APP}.key -subj \"/CN=${CSR_NAME}\" -out ${APP}.csr -config csr.conf"
-openssl req -new -key ${APP}.key -subj "/CN=${CSR_NAME}" -out ${APP}.csr -config csr.conf
+openssl req -new -key ${APP}.key -subj "/CN=system:node:${CSR_NAME};/O=system:nodes" -out ${APP}.csr -config csr.conf
+
 
 echo "... deleting existing csr, if any"
 echo "kubectl delete csr ${CSR_NAME} || :"
@@ -46,8 +47,8 @@ spec:
   usages:
   - digital signature
   - key encipherment
-  - client auth
-  signerName: kubernetes.io/kube-apiserver-client
+  - server auth
+  signerName: kubernetes.io/kubelet-serving
 EOF
 
 SECONDS=0
