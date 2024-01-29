@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine AS build
+FROM golang:1.19-alpine AS build
 ENV CGO_ENABLED 0
 
 RUN apk add openssl
@@ -7,10 +7,11 @@ RUN apk add openssl
 WORKDIR /app
 
 # Copy the Go module files
-COPY go.mod  ./
+COPY go.mod go.sum ./
+
+RUN go mod download
 
 COPY . .
-RUN ls
 
 # Build the Go application
 RUN go build -v -o mutating-admission-controller cmd/main.go
