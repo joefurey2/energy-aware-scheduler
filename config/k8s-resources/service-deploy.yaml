@@ -1,4 +1,6 @@
----
+# This deploys an instance of our mutating admission controller
+# Also deploys a clusterIP service to make the controller accessible within the cluster
+
 # Service to make controller accessible within cluster
 apiVersion: v1
 kind: Service
