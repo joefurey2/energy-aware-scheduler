@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"html"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
+	mutate "github.com/joefurey2/mutating-admission-controller/pkg/mutate"
 )
 
 // Any path not specified be handled by this function
@@ -21,7 +22,7 @@ func handleRoot(w http.ResponseWriter, req *http.Request) {
 	It then reads and mutates the request, returning the mutated request to the API server
 */
 func handleMutate(w http.ResponseWriter, req *http.Request) {
-	body, err := ioutil.ReadAll(req.Body)
+	body, err := io.ReadAll(req.Body)
 	defer req.Body.Close()
 
 	if err != nil {
@@ -30,15 +31,19 @@ func handleMutate(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	log.Println(body)
+	// mutate the request
+	mutated, err := mutate.MutateRequest(body)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}	
 	
-	// Modify the body to say "mutated"
-	body = []byte("mutated")
 	log.Println("mutated!!")
 
 	// Send back mutated admission controller
 	w.WriteHeader(http.StatusOK)
-	w.Write(body)
+	w.Write(mutated)
 }
 
 

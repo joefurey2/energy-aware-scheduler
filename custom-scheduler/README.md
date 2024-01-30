@@ -1,1 +1,0 @@
-This contains the code for the custom Kubernetes scheduler
