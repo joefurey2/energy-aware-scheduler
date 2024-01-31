@@ -11,6 +11,8 @@ kubeadmConfigPatches:
   apiServer:
     extraArgs:
       "enable-admission-plugins": "NamespaceLifecycle,LimitRanger,ServiceAccount,TaintNodesByCondition,Priority,DefaultTolerationSeconds,DefaultStorageClass,PersistentVolumeClaimResize,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota"
+# WHEN CHANGING REMEMBER TO APPLY LABELS TO NAMESPACE
+# kubectl label namespace default MAC=enabled
 nodes:
 - role: control-plane
   image: kindest/node:v1.27.3

@@ -41,23 +41,35 @@ func MutateRequest(body []byte) ([]byte, error) {
 		resp.Allowed = true
 		resp.UID = ar.UID
 		pT := admissionv1.PatchTypeJSONPatch
-		resp.PatchType = &pT 
-
-		// Audit annotations are stored in the kube-api-server and can be viewed with kubectl describe
-		resp.AuditAnnotations = map[string]string{
-			"mutating-admission-controller": "this pod was mutated",
-		}
+		resp.PatchType = &pT
 
         // Swap container image to ubuntu
-		p := []map[string]string{}
-        for i := range pod.Spec.Containers {
-            patch := map[string]string{
-                "op":    "replace",
-                "path":  fmt.Sprintf("/spec/containers/%d/image", i),
-                "value": "ubuntu",
-            }
-            p = append(p, patch)
+		p := []interface{}{}
+
+        // Add node affinity to efficient node
+        // At the moment, this schedules to node 1
+        affinityPatch := map[string]interface{}{
+            "op":    "add",
+            "path":  "/spec/affinity",
+            "value": map[string]interface{}{
+                "nodeAffinity": map[string]interface{}{
+                    "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
+                        "nodeSelectorTerms": []map[string]interface{}{
+                            {
+                                "matchExpressions": []map[string]interface{}{
+                                    {
+                                        "key":      "node",
+                                        "operator": "In",
+                                        "values":   []string{"1"},
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         }
+        p = append(p, affinityPatch)
 
         // Add a label to the pod
         labelPatch := map[string]string{
