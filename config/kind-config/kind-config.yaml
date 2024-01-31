@@ -3,7 +3,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: test-cluster
 kubeadmConfigPatches:
-- 
+- |
   apiVersion: kubeadm.k8s.io/v1beta2
   kind: ClusterConfiguration
   metadata:
@@ -13,9 +13,17 @@ kubeadmConfigPatches:
       "enable-admission-plugins": "NamespaceLifecycle,LimitRanger,ServiceAccount,TaintNodesByCondition,Priority,DefaultTolerationSeconds,DefaultStorageClass,PersistentVolumeClaimResize,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72
+  image: kindest/node:v1.27.3
   extraMounts:
   - hostPath: /proc
     containerPath: /proc-host
   - hostPath: /usr/src
     containerPath: /usr/src
+- role: worker
+  image: kindest/node:v1.27.3
+- role: worker
+  image: kindest/node:v1.27.3
+
+  
+
+
