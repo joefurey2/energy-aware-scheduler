@@ -12,10 +12,7 @@ import (
 	mutate "github.com/joefurey2/mutating-admission-controller/pkg/mutate"
 )
 
-type Node struct {
-	Name string `json:"name"`
-	// Add other fields as needed
-}
+
 // Any path not specified be handled by this function
 // Prevents XSS attacks and other errors
 func handleRoot(c *gin.Context) {
@@ -38,6 +35,7 @@ func handleUpdate(c *gin.Context) {
 		return
 	}
 
+	// Optimisation - store ranking in order to optimise when mutating
 	var nodes map[string]int
 	err = json.Unmarshal(body, &nodes)
 	if err != nil {
@@ -75,7 +73,6 @@ func handleGetRanking(c *gin.Context) {
 }
 
 
-
 /*
 	Admission controller recieves admission requests from the API server
 	It then reads and mutates the request, returning the mutated request to the API server
@@ -91,7 +88,7 @@ func handleMutate(c *gin.Context) {
 	}
 
 	// mutate the request
-	mutated, err := mutate.MutateRequest(body)
+	mutated, err := mutate.MutateRequest(nodeList, body)
 	if err != nil {
 		log.Println(err)
 		c.Writer.WriteHeader(http.StatusInternalServerError)
@@ -128,4 +125,3 @@ func main() {
 	log.Fatal(s.ListenAndServeTLS("./ssl/mutating-admission-controller.pem", "./ssl/mutating-admission-controller.key" ))
 
 }
-
