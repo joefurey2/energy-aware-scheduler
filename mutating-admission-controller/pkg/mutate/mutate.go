@@ -1,7 +1,6 @@
 package mutate
 
 import (
-    // "net/http"
     "encoding/json"
     "fmt"
     "log"
@@ -43,18 +42,23 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
         // Swap container image to ubuntu
         p := []interface{}{}
 
-        // Find nodes with value 1
-        nodes := []string{}
+        // Find efficientNodes with value 1
+        efficientNodes := []string{}
+        // inefficientNodes := []string{}
+
         for node, value := range nodeList {
             if value == 1 {
-                nodes = append(nodes, node)
-            }
+                efficientNodes = append(efficientNodes, node)
+            } 
+            // else if value == 3 {
+            //     inefficientNodes = append(inefficientNodes, node)
+            // }
         }
 
-        log.Println(nodes)
+        log.Println(efficientNodes)
         
-        // Check if node ranking exists
-        if len(nodes) > 0 {
+        // Check if there are efficent nodes exists
+        if len(efficientNodes) > 0 {
 
             // Add node affinity to efficient node
             // At the moment, this schedules to node 1
@@ -71,7 +75,7 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
                                         {
                                             "key":      "node",
                                             "operator": "In",
-                                            "values":   nodes,
+                                            "values":   efficientNodes,
                                         },
                                     },
                                 },
@@ -81,7 +85,37 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
                 },
             }
             p = append(p, affinityPatch)
-        }   
+        }
+        
+        // // Check if there are inefficient nodes exists
+        // if len(inefficientNodes) > 0 {
+
+        //     // Add node affinity to efficient node
+        //     // At the moment, this schedules to node 1
+        //     affinityPatch := map[string]interface{}{
+        //         "op":    "add",
+        //         "path":  "/spec/affinity",
+        //         "value": map[string]interface{}{
+        //             "nodeAffinity": map[string]interface{}{
+        //                 // requiredDuringSchedulingIgnoredDuringExecution - enforces pods to be scheduled on given nodes
+        //                 "preferredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
+        //                     "nodeSelectorTerms": []map[string]interface{}{
+        //                         {
+        //                             "matchExpressions": []map[string]interface{}{
+        //                                 {
+        //                                     "key":      "node",
+        //                                     "operator": "In",
+        //                                     "values":   inefficientNodes,
+        //                                 },
+        //                             },
+        //                         },
+        //                     },
+        //                 },
+        //             },
+        //         },
+        //     }
+        //     p = append(p, affinityPatch)
+        // }   
 
         // Add a label to the pod
         labelPatch := map[string]string{
