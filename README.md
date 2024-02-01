@@ -1,7 +1,16 @@
 # Energy aware scheduling in Kubernetes
 
-This repository is part of my undergraduate dissertation - Energy aware scheduling in Kubernetes.
+The project aims to schedule workloads across a Kubernetes cluster in a more energy efficient way.
 
-The project will involve creating and implementing a custom Kubernetes scheduling mechanism with an aim to schedule workloads in a more energy efficient way than the default.
+There are 3 key components to the project:
 
-This project will also utilise a Kubernetes cluster monitoring framework, and will require implementation of tools to emasure the power consumption and energy efficiency of each node in a cluster.
+A custom controller, providing a framework to control the scheduling of pods onto nodes across a cluster
+A model/process to evaluate and rank the energy efficiencies of different nodes
+The collection of energy consumption metrics of nodes and clusters as a whole, to be used for evaluation and ranking efficiencies
+A custom Mutating Admission Controller (MAC) will be created. This will provide a framework to implement and test different scheduling mechanisms and ideas.
+
+The MAC will intercept pods due to be scheduled and will apply affinity and anti affinity to different nodes based on a ranking provided to the controller. Scheduling tasks on more energy efficient nodes should reduce the overall energy consumption.
+
+This project will utilise the Kepler monitoring tool (https://sustainable-computing.io/) to get information about cluster and nodes energy usage and efficiency
+
+Finally, different models and ranking ideas will be implemented, tested and evaluated to look at the effectiveness of this project
