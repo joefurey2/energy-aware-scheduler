@@ -11,7 +11,7 @@ import (
 )
 
 // MutateRequest takes in a request body and returns a mutated request body
-// Important to note that you instruct k8s how to update the pod, not modify the pod directly
+// Note: to modify a pod, instruct k8s how to update the pod, not modify the pod directly
 func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
 
     // unmarshalls (byte string -> JSON) request into AdmissionReview struct
@@ -29,27 +29,28 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
 
     if ar != nil {
 
-        // get the Pod object and unmarshal it into its struct, if we cannot, we might as well stop here
+        // Catches invalid request
         if err := json.Unmarshal(ar.Object.Raw, &pod); err != nil {
             return nil, fmt.Errorf("unable to unmarshal pod json object %v", err)
         }
-        // set response options
+
         resp.Allowed = true
         resp.UID = ar.UID
         pT := admissionv1.PatchTypeJSONPatch
         resp.PatchType = &pT
 
-        // Swap container image to ubuntu
+        // Used for modification
         p := []interface{}{}
 
-        // Find efficientNodes with value 1
         efficientNodes := []string{}
-        // inefficientNodes := []string{}
-
+        // inefficientNodes := []string{} - May use this for anti-affinity
+        
+        // Find efficientNodes with value 1
         for node, value := range nodeList {
             if value == 1 {
                 efficientNodes = append(efficientNodes, node)
             } 
+            // May use this for anti-affinity
             // else if value == 3 {
             //     inefficientNodes = append(inefficientNodes, node)
             // }
@@ -67,7 +68,7 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
                 "path":  "/spec/affinity",
                 "value": map[string]interface{}{
                     "nodeAffinity": map[string]interface{}{
-                        // preferredDuringSchedulingIgnoredDuringExecution - enforces pods to be scheduled on given nodes
+                        // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
                         "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
                             "nodeSelectorTerms": []map[string]interface{}{
                                 {
@@ -125,7 +126,7 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
         //     p = append(p, affinityPatch)
         // }   
 
-		// parse the []map into JSON
+		// Marshal patch before return to API server
 		resp.Patch, err = json.Marshal(p)
 
 		resp.Result = &metav1.Status{
@@ -136,7 +137,7 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
 		// marshall to JSON so we can return the AdmissionReview
 		responseBody, err = json.Marshal(admReview)
 		if err != nil {
-			return nil, err // untested section
+			return nil, err 
 		}
     }
 

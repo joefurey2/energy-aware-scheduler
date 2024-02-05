@@ -13,7 +13,7 @@ import (
 )
 
 
-// Any path not specified be handled by this function
+// Any unknown path is handled by this function
 // Prevents XSS attacks and other errors
 func handleRoot(c *gin.Context) {
 	log.Println("Root request!")
@@ -23,8 +23,7 @@ func handleRoot(c *gin.Context) {
 
 var nodeList map[string]int
 
-// Update the ranking of nodes based on energy efficiency
-// This endpoint can be called to update the ranking of nodes
+// Endpoint to update the ranking of nodes based on some 'energy efficiency'
 func handleUpdate(c *gin.Context) {
 	body, err := io.ReadAll(c.Request.Body)
 	defer c.Request.Body.Close()
@@ -35,14 +34,8 @@ func handleUpdate(c *gin.Context) {
 		return
 	}
 
-	// Optimisation - store ranking in order to optimise when mutating
+	// Furture optimisation - store ranking in order to optimise when mutating, will prevent sorting of all nodes
 	var nodes map[string]int
-	err = json.Unmarshal(body, &nodes)
-	if err != nil {
-		log.Println(err)
-		c.Writer.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
 	err = json.Unmarshal(body, &nodes)
 	log.Println(nodes)
@@ -58,7 +51,7 @@ func handleUpdate(c *gin.Context) {
 	c.Writer.WriteHeader(http.StatusOK)
 }
 
-// Function to get current ranking of nodes stored in the system
+// Endpoint to return current ranking of nodes stored in controller
 func handleGetRanking(c *gin.Context) {
 	rankingJSON, err := json.Marshal(nodeList)
 	if err != nil {
@@ -74,8 +67,8 @@ func handleGetRanking(c *gin.Context) {
 
 
 /*
-	Admission controller recieves admission requests from the API server
-	It then reads and mutates the request, returning the mutated request to the API server
+	Admission controller recieves admission requests from the kube-api server
+	It then reads and mutates the request, returning the mutated request to the kube-api server
 */
 func handleMutate(c *gin.Context) {
 	body, err := io.ReadAll(c.Request.Body)
@@ -87,7 +80,7 @@ func handleMutate(c *gin.Context) {
 		return
 	}
 
-	// mutate the request
+	// Mutate the request
 	mutated, err := mutate.MutateRequest(nodeList, body)
 	if err != nil {
 		log.Println(err)
