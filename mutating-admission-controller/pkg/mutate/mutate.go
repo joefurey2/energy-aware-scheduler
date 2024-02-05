@@ -57,7 +57,7 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
 
         log.Println(efficientNodes)
         
-        // Check if there are efficent nodes exists
+        // Check if there are efficent nodes specified
         if len(efficientNodes) > 0 {
 
             // Add node affinity to efficient node
@@ -67,8 +67,8 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
                 "path":  "/spec/affinity",
                 "value": map[string]interface{}{
                     "nodeAffinity": map[string]interface{}{
-                        // requiredDuringSchedulingIgnoredDuringExecution - enforces pods to be scheduled on given nodes
-                        "preferredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
+                        // preferredDuringSchedulingIgnoredDuringExecution - enforces pods to be scheduled on given nodes
+                        "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
                             "nodeSelectorTerms": []map[string]interface{}{
                                 {
                                     "matchExpressions": []map[string]interface{}{
@@ -85,6 +85,14 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
                 },
             }
             p = append(p, affinityPatch)
+        
+                // Add a label to the pod
+            labelPatch := map[string]string{
+                "op":    "add",
+                "path":  "/metadata/labels/modified",
+                "value": "modifiedTo" + efficientNodes[0],
+            }
+            p = append(p, labelPatch)
         }
         
         // // Check if there are inefficient nodes exists
@@ -116,14 +124,6 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
         //     }
         //     p = append(p, affinityPatch)
         // }   
-
-        // Add a label to the pod
-        labelPatch := map[string]string{
-            "op":    "add",
-            "path":  "/metadata/labels/modified",
-            "value": "true",
-        }
-        p = append(p, labelPatch)
 
 		// parse the []map into JSON
 		resp.Patch, err = json.Marshal(p)
