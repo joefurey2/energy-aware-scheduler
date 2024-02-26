@@ -85,6 +85,7 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
                     },
                 },
             }
+            
             p = append(p, affinityPatch)
         
                 // Add a label to the pod
