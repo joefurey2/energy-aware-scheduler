@@ -9,6 +9,18 @@ Need to install:
 - go
 - Make
 
+# Full config
+This is the key page to help set up - https://sustainable-computing.io/installation/kepler-operator/
+
+Steps:
+ - cd kepler-operator
+ - make fresh
+     - After running it will tell you two commands to run. Run these
+ - Port forward 3000
+
+ You should now be able to access kepler and visualise energy consumption!
+
+
 # To set up prometheus and grafana
 
 Prometheus
