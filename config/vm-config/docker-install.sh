@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Update package repositories
-sudo dnf update -y
+# sudo dnf update -y
 
 # Install dependencies
-sudo dnf install -y dnf-plugins-core
+# sudo dnf install -y dnf-plugins-core
 
 # Add Docker repository
 sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
