@@ -16,6 +16,8 @@ Steps:
  - cd kepler-operator
  - make fresh
      - After running it will tell you two commands to run. Run these
+     - ./tmp/bin/operator-sdk run bundle localhost:5001/kepler-operator-bundle:0.0.0-dev --install-mode AllNamespaces --namespace operators --skip-tls
+     - kubectl apply -f config/samples/kepler.system_v1alpha1_kepler.yaml
  - Port forward 3000
 
  You should now be able to access kepler and visualise energy consumption!
