@@ -9,8 +9,9 @@ Need to install:
 - go
 - Make
 
-# Full config
+# Full config for kepler
 This is the key page to help set up - https://sustainable-computing.io/installation/kepler-operator/
+TODO: test if this works when installing prometheus/grafana
 
 Steps:
  - cd kepler-operator
@@ -32,13 +33,13 @@ kubectl apply --server-side -f manifests/setup
     until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
 kubectl apply -f manifests/
 
-kepler:
+# To install k8s metric server
+Curl to to get YAML deployment
+Edit the deployment to pass the args --kublet-insecure-tls=true
 
-# git clone --depth 1 https://github.com/sustainable-computing-io/kepler.git
+curl -LJO https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+vim -> find deployment and add --kublet-insecure-tls=true to args
 
-cd ./kepler
-make build-manifest OPTS="CI_DEPLOY PROMETHEUS_DEPLOY"
-kubectl apply -f _output/generated-manifest/deployment.yaml
 
-To import grafana dashboard:
+# To import grafana dashboard:
 Json model: https://raw.githubusercontent.com/sustainable-computing-io/kepler/main/grafana-dashboards/Kepler-Exporter.json
