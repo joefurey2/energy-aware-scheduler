@@ -1,20 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cpu-stress-deployment
+  name: stress-worker2
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: cpu-stress
+      app: stress-worker2
   template:
     metadata:
       labels:
-        app: cpu-stress
+        app: stress-worker2
     spec:
+      nodeName: kind-worker2
       containers:
       - name: cpu-stress-container
         image: ubuntu:latest
         command: ["/bin/bash", "-c"]
         args:
-        - apt-get update && apt-get install -y stress-ng && stress-ng --cpu 1 --timeout 3600s --metrics-brief
+        - apt-get update && apt-get install -y stress-ng && stress-ng --cpu 2 --timeout 3600s --metrics-brief

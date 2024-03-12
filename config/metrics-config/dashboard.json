@@ -23,7 +23,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 26,
-  "iteration": 1709724459535,
+  "iteration": 1710244835532,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -86,8 +86,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -216,7 +215,7 @@
         {
           "datasource": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (instance) (irate(kepler_container_package_joules_total[1m]))",
+          "expr": "sum by (instance) (irate(kepler_container_package_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\", instance=~\"$instance\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{pod_name}} / {{instance}} / PKG",
@@ -307,8 +306,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -528,8 +526,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1346,13 +1343,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-1m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Kepler Exporter Dashboard",
   "uid": "NhnADUW4zIBM",
-  "version": 9,
+  "version": 2,
   "weekStart": ""
 }
