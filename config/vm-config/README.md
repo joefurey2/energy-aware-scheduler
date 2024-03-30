@@ -38,7 +38,7 @@ Curl to to get YAML deployment
 Edit the deployment to pass the args --kublet-insecure-tls=true
 
 curl -LJO https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-vim -> find deployment and add --kublet-insecure-tls=true to args
+vim -> find deployment and add --kubelet-insecure-tls=true to args
 
 
 # To import grafana dashboard:
