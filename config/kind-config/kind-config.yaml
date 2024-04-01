@@ -21,6 +21,9 @@ nodes:
     containerPath: /proc-host
   - hostPath: /usr/src
     containerPath: /usr/src
+  extraPortMappings:
+  - containerPort: 30000
+    hostPort: 30000
 - role: worker
   image: kindest/node:v1.27.3
 - role: worker
