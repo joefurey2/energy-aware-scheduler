@@ -1,17 +1,18 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: stress-ng-job
+  name: stress-job-1node
 spec:
-  completions: 15
-  parallelism: 3
+  completions: 20
+  parallelism: 20
   completionMode: Indexed
   template:
     metadata:
       name: stress-ng-pod
       labels:
-        job: 3pods-15completions
+        job: 20pods-1node
     spec:
+      nodeName: kind-worker
       containers:
       - name: stress-ng-container
         image: ubuntu:latest
