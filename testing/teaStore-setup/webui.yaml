@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-webui
+  labels:
+    app: teastore
+    run: teastore-webui
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-webui
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-webui
+    spec:
+      containers:
+        - name: teastore-webui
+          image: descartesresearch/teastore-webui
+          ports:
+            - containerPort: 8080
+          env:
+            - name: HOST_NAME
+              value: "teastore-webui"
+            - name: REGISTRY_HOST
+              value: "teastore-registry"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webui-lb
+spec:
+  selector:
+    app: teastore
+    run: teastore-webui
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer
