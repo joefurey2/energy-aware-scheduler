@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-job-deployment
+spec:
+  replicas: 3  # Number of parallel instances to run
+  selector:
+    matchLabels:
+      app: my-job
+  template:
+    metadata:
+      labels:
+        app: my-job
+    spec:
+      containers:
+      - name: my-job-container
+        image: your-stress-ng-image:tag
+        command: ["/bin/sh", "-c", "stress-ng --cpu 1 --timeout 120s"] # Adjust stress-ng command as needed
+
