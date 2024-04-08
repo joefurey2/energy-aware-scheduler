@@ -1,24 +1,23 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: low-stress
+  name: medium-stress
 spec:
-  completions: 4
-  parallelism: 4
+  completions: 15
+  parallelism: 15
   completionMode: Indexed
   template:
     metadata:
       name: stress-ng-pod
       labels:
-        job: low-stress
+        job: medium-stress
     spec:
-      nodeName: kind-worker
       containers:
       - name: stress-ng-container
         image: ubuntu:latest
         command: ["/bin/bash", "-c"]
         args:
-          - apt-get update && apt-get install -y stress-ng && stress-ng --cpu 1 --timeout 180s --metrics-brief
+          - apt-get update && apt-get install -y stress-ng && stress-ng --cpu 1 --cpu-ops 80000  --metrics-brief
         resources:
           requests:
             cpu: "0.5" # Adjust CPU request as needed

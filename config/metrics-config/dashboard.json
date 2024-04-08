@@ -23,7 +23,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 26,
-  "iteration": 1712331291053,
+  "iteration": 1712578875727,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -148,7 +148,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "sum(kepler_container_package_joules_total{container_namespace=\"default\", pod_name=~\"stress-job-.*\"})",
+          "expr": "sum(kepler_container_package_joules_total{container_namespace=\"default\", pod_name=~\"low-stress-.*\"})",
           "format": "heatmap",
           "range": true,
           "refId": "A"
@@ -567,7 +567,7 @@
         {
           "datasource": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (instance) (irate(kepler_container_package_joules_total{container_namespace=~\"$namespace\", pod_name=~\"$pod\", instance=~\"$instance\"}[1m]))",
+          "expr": "sum by (instance) (irate(kepler_container_package_joules_total{container_namespace=~\"$namespace\", pod_name!=\"system_processes\", instance=~\"$instance\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{pod_name}} / {{instance}} / PKG",
@@ -658,7 +658,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -878,7 +879,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1007,7 +1009,7 @@
         {
           "datasource": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (pod_name, container_name, container_namespace, node) (irate(kepler_container_joules_total{}[1m]))",
+          "expr": "sum by (pod_name, container_name, container_namespace, node) (irate(kepler_container_joules_total{pod_name!=\"system_processes\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{pod_name}}",
@@ -1063,7 +1065,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1283,7 +1286,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1694,7 +1698,7 @@
       "type": "bargauge"
     }
   ],
-  "refresh": "",
+  "refresh": "5s",
   "schemaVersion": 36,
   "style": "dark",
   "tags": [],
@@ -1880,13 +1884,13 @@
     ]
   },
   "time": {
-    "from": "now-1m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Kepler Exporter Dashboard",
   "uid": "NhnADUW4zIBM",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }

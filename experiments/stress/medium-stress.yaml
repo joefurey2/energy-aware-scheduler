@@ -12,7 +12,7 @@ spec:
       labels:
         job: medium-stress
     spec:
-      nodeName: kind-worker
+      nodeName: kind-worker2
       containers:
       - name: stress-ng-container
         image: ubuntu:latest
