@@ -101,7 +101,7 @@ def main():
         averageEnergy = totalEnergy / len(pods)
         print(f"Average energy per pod for {numInstances} instances: {averageEnergy}")
 
-        with open('results.csv', 'w', newline='') as csvfile:
+        with open(f'{args.nodeName}-{args.numInstances}.csv', 'w', newline='') as csvfile:
             fieldnames = ['num_instances', 'pod_name', 'pod_energy']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
