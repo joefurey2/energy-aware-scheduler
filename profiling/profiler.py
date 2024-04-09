@@ -1,7 +1,6 @@
 import time
 from kubernetes import client, config
 from prometheus_api_client import PrometheusConnect
-import yaml
 import argparse
 
 config.load_kube_config()
@@ -11,7 +10,7 @@ podTemplate = {
     "apiVersion": "v1",
     "kind": "Pod",
     "metadata": {
-        "name": "pod-stress",
+        "name": "",
         "labels": {
             "job": ""
         }
@@ -42,9 +41,10 @@ podTemplate = {
     }
 }
 
-def getMetric(metricName):
+def getMetric(podName):
     prom = PrometheusConnect(url="http://localhost:9090", disable_ssl=True)
-    metricData = prom.get_current_metric_value(metricName)
+    metric= f'kepler_container_package_joules_total{{pod_name="{podName}"}}'
+    metricData = prom.get_current_metric_value(metric)
     return metricData
 
 def createPod(v1, podTemplate, podName, namespace="default"):
@@ -68,8 +68,8 @@ def runPods(v1, podTemplate, numInstances, metricName):
         for j in range(i):
             podName = f"stress-{i}instance-pod{j+1}"
             waitForPodCompletion(v1, podName)
-            metric = getMetric(metricName)
-            metrics[i].append({"podName": podName, "metric": metric})
+            energy = getMetric(podName)
+            metrics[i].append({"podName": podName, "energy": energy})
     return metrics
 
 def main():
