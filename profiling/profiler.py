@@ -56,11 +56,20 @@ def waitForPodCompletion(v1, podName, namespace="default"):
     while True:
         podStatus = v1.read_namespaced_pod_status(podName, namespace).status.phase
         if podStatus == "Succeeded" or podStatus == "Failed":
+            time.sleep(5) # Ensures pod has finished and closed before metric is taken
             break
         time.sleep(1)
 
+def deletePod(v1, podName, namespace="default"):
+    try:
+        v1.delete_namespaced_pod(name=podName, namespace=namespace)
+    except client.exceptions.ApiException as e:
+        print(f"Exception when calling CoreV1Api->delete_namespaced_pod: {e}")
+
 def runPods(v1, podTemplate, numInstances):
     metrics = {}
+    slept = False
+    podNames = []
     for i in range(1, numInstances + 1):
         print(f"Running {i} pod(s)...")
         metrics[i] = []
@@ -72,10 +81,15 @@ def runPods(v1, podTemplate, numInstances):
             podName = f"stress-{i}instance-pod{j+1}"
             print(f"Waiting for pod {podName} to complete...")
             waitForPodCompletion(v1, podName)
+        time.sleep(5)
+        for pod in podNames:
             print(f"Getting metric for pod {podName}...")
             energy = getMetric(podName)
+            print("podName", podName, "energy", energy)
             metrics[i].append({"podName": podName, "energy": energy})
-        print(f"Finished running {i} pod(s).")
+        for podName in podNames:
+            deletePod(v1, podName)
+        print(f"Finished running {i} pod(s), deleted pods and cleanedup")
     return metrics
 
 def main():
@@ -115,16 +129,16 @@ def main():
                         'pod_name': pod['podName'],
                         'pod_energy': pod['energy']
                     })
-                writer.writerow({
-                    'num_instances': numInstances,
-                    'pod_name': 'Total',
-                    'pod_energy': totalEnergy
-                })
-                writer.writerow({
-                    'num_instances': numInstances,
-                    'pod_name': 'Average',
-                    'pod_energy': averageEnergy
-                })
+                # writer.writerow({
+                #     'num_instances': numInstances,
+                #     'pod_name': 'Total',
+                #     'pod_energy': totalEnergy
+                # })
+                # writer.writerow({
+                #     'num_instances': numInstances,
+                #     'pod_name': 'Average',
+                #     'pod_energy': averageEnergy
+                # })
 
 if __name__ == "__main__":
     main()
