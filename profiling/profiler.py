@@ -44,9 +44,9 @@ podTemplate = {
 def getMetric(podName):
     prom = PrometheusConnect(url="http://localhost:9090", disable_ssl=True)
     metric= f'kepler_container_package_joules_total{{pod_name="{podName}"}}'
-    metricData = prom.get_current_metric_value(metric)
-    print("Data = ", metricData)
-    return metricData
+    energy = prom.get_current_metric_value(metric)['value'][1]
+    print("Energy = ", energy)
+    return energy
 
 def createPod(v1, podTemplate, podName, namespace="default"):
     podTemplate["metadata"]["name"] = podName
