@@ -12,7 +12,7 @@ podTemplate = {
     "metadata": {
         "name": "",
         "labels": {
-            "job": ""
+            "test": ""
         }
     },
     "spec": {
@@ -87,6 +87,7 @@ def main():
     v1 = client.CoreV1Api()
 
     podTemplate["spec"]["nodeName"] = args.nodeName
+    podTemplate["metadata"]["labels"]["test"] = f"{args.nodeName}-{args.numInstances}" 
 
     metrics = runPods(v1, podTemplate, args.numInstances)  # replace with your actual values
     for numInstances, pods in metrics.items():
