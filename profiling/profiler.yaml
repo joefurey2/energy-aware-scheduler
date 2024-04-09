@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profiler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profiler
+  template:
+    metadata:
+      labels:
+        app: profiler
+    spec:
+      containers:
+      - name: profiler
+        image: profiler:latest
+        imagePullPolicy: IfNotPresent

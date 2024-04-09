@@ -1,0 +1,4 @@
+kubernetes==12.0.1
+prometheus-api-client==0.4.2
+yaml
+argparse
