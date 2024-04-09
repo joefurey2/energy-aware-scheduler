@@ -107,7 +107,7 @@ def main():
 
             writer.writeheader()
             for numInstances, pods in metrics.items():
-                totalEnergy = sum(pod['energy'] for pod in pods)
+                totalEnergy = sum(float(pod['energy']) for pod in pods)
                 averageEnergy = totalEnergy / len(pods)
                 for pod in pods:
                     writer.writerow({
