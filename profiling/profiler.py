@@ -77,12 +77,13 @@ def runPods(v1, podTemplate, numInstances):
             podName = f"stress-{i}instance-pod{j+1}"
             print(f"Creating pod {podName}...")
             createPod(v1, podTemplate, podName)
-        for j in range(i):
+            podNames.append(podName)
+        for podName in podNames:
             podName = f"stress-{i}instance-pod{j+1}"
             print(f"Waiting for pod {podName} to complete...")
             waitForPodCompletion(v1, podName)
         time.sleep(5)
-        for pod in podNames:
+        for podName in podNames:
             print(f"Getting metric for pod {podName}...")
             energy = getMetric(podName)
             print("podName", podName, "energy", energy)
