@@ -58,18 +58,23 @@ def waitForPodCompletion(v1, podName, namespace="default"):
             break
         time.sleep(1)
 
-def runPods(v1, podTemplate, numInstances, metricName):
+def runPods(v1, podTemplate, numInstances):
     metrics = {}
     for i in range(1, numInstances + 1):
+        print(f"Running {i} pod(s)...")
         metrics[i] = []
         for j in range(i):
             podName = f"stress-{i}instance-pod{j+1}"
+            print(f"Creating pod {podName}...")
             createPod(v1, podTemplate, podName)
         for j in range(i):
             podName = f"stress-{i}instance-pod{j+1}"
+            print(f"Waiting for pod {podName} to complete...")
             waitForPodCompletion(v1, podName)
+            print(f"Getting metric for pod {podName}...")
             energy = getMetric(podName)
             metrics[i].append({"podName": podName, "energy": energy})
+        print(f"Finished running {i} pod(s).")
     return metrics
 
 def main():
@@ -83,9 +88,16 @@ def main():
 
     podTemplate["spec"]["nodeName"] = args.nodeName
 
-    metrics = runPods(v1, podTemplate, args.numInstances, "myMetric")  # replace with your actual values
-    for numPods, metric in metrics:
-        print(f"Number of pods: {numPods}, Metric: {metric}")
+    metrics = runPods(v1, podTemplate, args.numInstances)  # replace with your actual values
+    for numInstances, pods in metrics.items():
+        print(f"Number of instances: {numInstances}")
+        totalEnergy = 0
+        for pod in pods:
+            print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
+            totalEnergy += pod['energy']
+        print(f"Total energy for {numInstances} instances: {totalEnergy}")
+        averageEnergy = totalEnergy / len(pods)
+        print(f"Average energy per pod for {numInstances} instances: {averageEnergy}")
 
 if __name__ == "__main__":
     main()
