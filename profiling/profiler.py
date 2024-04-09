@@ -2,6 +2,7 @@ import time
 from kubernetes import client, config
 from prometheus_api_client import PrometheusConnect
 import argparse
+import csv
 
 config.load_kube_config()
 v1 = client.CoreV1Api()
@@ -99,6 +100,31 @@ def main():
         print(f"Total energy for {numInstances} instances: {totalEnergy}")
         averageEnergy = totalEnergy / len(pods)
         print(f"Average energy per pod for {numInstances} instances: {averageEnergy}")
+
+        with open('results.csv', 'w', newline='') as csvfile:
+            fieldnames = ['num_instances', 'pod_name', 'pod_energy']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            for numInstances, pods in metrics.items():
+                totalEnergy = sum(pod['energy'] for pod in pods)
+                averageEnergy = totalEnergy / len(pods)
+                for pod in pods:
+                    writer.writerow({
+                        'num_instances': numInstances,
+                        'pod_name': pod['podName'],
+                        'pod_energy': pod['energy']
+                    })
+                writer.writerow({
+                    'num_instances': numInstances,
+                    'pod_name': 'Total',
+                    'pod_energy': totalEnergy
+                })
+                writer.writerow({
+                    'num_instances': numInstances,
+                    'pod_name': 'Average',
+                    'pod_energy': averageEnergy
+                })
 
 if __name__ == "__main__":
     main()
