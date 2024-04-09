@@ -73,6 +73,7 @@ def runPods(v1, podTemplate, numInstances):
     for i in range(1, numInstances + 1):
         print(f"Running {i} pod(s)...")
         metrics[i] = []
+        podNames = []
         for j in range(i):
             podName = f"stress-{i}instance-pod{j+1}"
             print(f"Creating pod {podName}...")
