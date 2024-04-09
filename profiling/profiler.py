@@ -45,7 +45,6 @@ def getMetric(podName):
     prom = PrometheusConnect(url="http://localhost:9090", disable_ssl=True)
     metric= f'kepler_container_package_joules_total{{pod_name="{podName}"}}'
     energy = prom.get_current_metric_value(metric)[0]['value'][1]
-    print("Energy = ", energy)
     return energy
 
 def createPod(v1, podTemplate, podName, namespace="default"):
@@ -96,7 +95,7 @@ def main():
         totalEnergy = 0
         for pod in pods:
             print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
-            totalEnergy += int(pod['energy'])
+            totalEnergy += float(pod['energy'])
         print(f"Total energy for {numInstances} instances: {totalEnergy}")
         averageEnergy = totalEnergy / len(pods)
         print(f"Average energy per pod for {numInstances} instances: {averageEnergy}")
