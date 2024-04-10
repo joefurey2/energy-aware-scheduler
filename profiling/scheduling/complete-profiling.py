@@ -74,7 +74,7 @@ def runPods(v1, podTemplate, numInstances, nodes):
     for i in range(1, numInstances):
         print(f"Testing {i} pods across {len(nodes)} nodes...")
         metrics[str(i)] = []
-        for combination in itertools.product(nodes, repeat=i):
+        for combination in itertools.combinations_with_replacement(nodes, i):
             nodeCounts = {node: combination.count(node) for node in nodes}
             combinationMetrics = {}
             counter = 1
