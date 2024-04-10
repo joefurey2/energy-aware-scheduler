@@ -118,7 +118,7 @@ def main():
     podTemplate["metadata"]["labels"]["test"] = f"full-profiling" 
 
 
-    metrics = runPods(v1, podTemplate, numInstances, nodes)  
+    metrics = runPods(v1, podTemplate, args.instances, nodes)  
     for numInstances, combinations in metrics.items():
         print(f"Number of instances: {numInstances}")
         minEnergy = float('inf')
