@@ -122,13 +122,22 @@ def main():
         averageEnergy = totalEnergy / len(pods)
         print(f"Average energy per pod for {nodeName}: {averageEnergy}")
 
-        with open(f'{nodeName}.csv', 'w', newline='') as csvfile:
-            fieldnames = ['node_name', 'pod_name', 'pod_energy']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    totalEnergyAllNodes = 0
+    totalPodsAllNodes = 0
+    for nodeName, pods in metrics.items():
+        totalEnergyNode = sum(float(pod['energy']) for pod in pods)
+        totalEnergyAllNodes += totalEnergyNode
+        totalPodsAllNodes += len(pods)
+    averageEnergyAllNodes = totalEnergyAllNodes / totalPodsAllNodes
+    print(f"All Nodes, Total Energy: {totalEnergyAllNodes}, Average Energy: {averageEnergyAllNodes}")
 
-            writer.writeheader()
-            totalEnergy = sum(float(pod['energy']) for pod in pods)
-            averageEnergy = totalEnergy / len(pods)
+    filename = '-'.join(f"{nodeName}-{numInstances}" for nodeName, numInstances in nodes.items()) + '.csv'
+    with open(filename, 'w', newline='') as csvfile:
+        fieldnames = ['node_name', 'pod_name', 'pod_energy']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for nodeName, pods in metrics.items():
             for pod in pods:
                 writer.writerow({
                     'node_name': nodeName,
