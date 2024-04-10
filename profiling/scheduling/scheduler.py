@@ -80,13 +80,14 @@ def runPods(v1, podTemplate, nodes):
             createPod(v1, podTemplate, podName, nodeName)
             podNames.append(podName)
         allPodNames[nodeName]= podNames
-    for podNames in allPodNames.items():
+    print(allPodNames)
+    for nodeName, podNames in allPodNames.items():
         for podName in podNames:
             print(f"Waiting for pod {podName} to complete...")
             waitForPodCompletion(v1, podName)
     time.sleep(20) 
-    for nodeName, pods in allPodNames.items():
-        for podName in pods:
+    for nodeName, podNames in allPodNames.items():
+        for podName in podNames:
             print(f"Getting metric for pod {podName}...")
             energy = getMetric(podName)
             metrics[nodeName].append({"podName": podName, "energy": energy})
