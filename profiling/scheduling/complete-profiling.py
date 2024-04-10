@@ -68,20 +68,19 @@ def deletePod(v1, podName, namespace="default"):
     except client.exceptions.ApiException as e:
         print(f"Exception when calling CoreV1Api->delete_namespaced_pod: {e}")
 
-def runPods(v1, podTemplate, nodes):
+def runPods(v1, podTemplate, numInstances, nodes):
     metrics = {}
     allPodNames = {}
-    for numInstances in range(1, max(nodes.values()) + 1):
-        metrics[str(numInstances) + 'instance'] = []
-        for combination in itertools.combinations_with_replacement(nodes.keys(), numInstances):
-            print(combination)
-            nodeCounts = {node: combination.count(node) for node in set(combination)}
+    for i in range(1, numInstances + 1):
+        metrics[str(i) + 'instance'] = []
+        for combination in itertools.product(nodes, repeat=i):
+            nodeCounts = {node: combination.count(node) for node in nodes}
             combinationMetrics = {}
-            for nodeName, numInstances in nodeCounts.items():
-                print(f"Running {numInstances} pod(s) on {nodeName}...")
+            for nodeName, count in nodeCounts.items():
+                print(f"Running {count} pod(s) on {nodeName}...")
                 podNames = []
-                for j in range(numInstances):
-                    podName = f"stress-{nodeName}-{numInstances}instance-pod{j+1}"
+                for j in range(count):
+                    podName = f"stress-{nodeName}-{i}instance-pod{j+1}"
                     print(f"Creating pod {podName}...")
                     createPod(v1, podTemplate, podName, nodeName)
                     podNames.append(podName)
@@ -95,12 +94,12 @@ def runPods(v1, podTemplate, nodes):
                 for podName in podNames:
                     print(f"Getting metric for pod {podName}...")
                     energy = getMetric(podName)
-                    combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes.keys())
+                    combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes)
                     if combinationKey not in combinationMetrics:
                         combinationMetrics[combinationKey] = []
                     combinationMetrics[combinationKey].append({"podName": podName, "energy": energy})
             print(f"Finished running pods on {nodeName}. Deleting pods...")
-            metrics[str(numInstances) + 'instance'].append(combinationMetrics)
+            metrics[str(i) + 'instance'].append(combinationMetrics)
             allPodNames = {}
     return metrics
 
@@ -110,17 +109,16 @@ def main():
     parser.add_argument('--nodes', nargs='+', required=True)
     args = parser.parse_args()
 
-    nodes = dict(zip(args.nodes[::2], map(int, args.nodes[1::2])))
+    nodes = args.nodes
 
     config.load_kube_config()
     v1 = client.CoreV1Api()
 
-    print(str(nodes.items()))
 
     podTemplate["metadata"]["labels"]["test"] = f"full-profiling" 
 
 
-    metrics = runPods(v1, podTemplate, nodes)  
+    metrics = runPods(v1, podTemplate, numInstances, nodes)  
     for numInstances, combinations in metrics.items():
         print(f"Number of instances: {numInstances}")
         minEnergy = float('inf')
