@@ -71,10 +71,10 @@ def deletePod(v1, podName, namespace="default"):
 def runPods(v1, podTemplate, numInstances, nodes):
     metrics = {}
     allPodNames = {}
-    for i in range(1, numInstances + 1):
+    for i in range(1, numInstances):
         print(f"Testing {i} pods across {len(nodes)} nodes...")
         metrics[str(i)] = []
-        for combination in itertools.combinations(nodes, i):
+        for combination in itertools.product(nodes, repeat=i):
             nodeCounts = {node: combination.count(node) for node in nodes}
             combinationMetrics = {}
             counter = 1
