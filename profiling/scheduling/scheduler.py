@@ -68,7 +68,7 @@ def deletePod(v1, podName, namespace="default"):
 
 def runPods(v1, podTemplate, nodes):
     metrics = {}
-    allPodNames = []
+    allPodNames = {}
     for nodeName, numInstances in nodes.items():
         print(f"Running {numInstances} pod(s) on {nodeName}...")
         metrics[nodeName] = []
@@ -78,12 +78,13 @@ def runPods(v1, podTemplate, nodes):
             print(f"Creating pod {podName}...")
             createPod(v1, podTemplate, podName, nodeName)
             podNames.append(podName)
-        allPodNames.extend(podNames)
-    for podName in allPodNames:
-        print(f"Waiting for pod {podName} to complete...")
-        waitForPodCompletion(v1, podName)
+        allPodNames[nodeName](podNames)
+    for podName in allPodNames.items():
+        for podName in podNames:
+            print(f"Waiting for pod {podName} to complete...")
+            waitForPodCompletion(v1, podName)
     time.sleep(10) # Maybe 10 would be better
-    for nodeName, podNames in nodes.items():
+    for nodeName, podNames in allPodNames.items():
         for podName in podNames:
             print(f"Getting metric for pod {podName}...")
             energy = getMetric(podName)
