@@ -101,7 +101,7 @@ def runPods(v1, podTemplate, numInstances, nodes):
                     if combinationKey not in combinationMetrics:
                         combinationMetrics[combinationKey] = []
                     combinationMetrics[combinationKey].append({"podName": podName, "energy": energy})
-            print(f"Finished running pods on {nodeName}. Deleting pods...")
+            print(f"Finished running pods on {nodeName}")
             metrics[str(i) + 'instance'].append(combinationMetrics)
             allPodNames = {}
     return metrics
@@ -121,22 +121,23 @@ def main():
     podTemplate["metadata"]["labels"]["test"] = f"full-profiling" 
 
 
-    metrics = runPods(v1, podTemplate, args.instances, nodes)  
+    metrics = runPods(v1, podTemplate, args.instances+1, nodes)  
+    print(metrics.items)
     for numInstances, combinations in metrics.items():
-        print(f"Number of instances: {numInstances}")
+        print(f"Number of pods: {numInstances}")
         minEnergy = float('inf')
         minEnergyCombination = None
         for combination in combinations:
             totalEnergyCombination = 0
-            for nodeName, pods in combination.items():
-                print(f"Node: {nodeName}")
+            for combination, pods in combination.items():
+                print(f"Combination: {combination}")
                 totalEnergy = 0
                 for pod in pods:
                     print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
                     totalEnergy += float(pod['energy'])
-                print(f"Total energy for {nodeName}: {totalEnergy}")
+                print(f"Total energy for {combination}: {totalEnergy}")
                 averageEnergy = totalEnergy / len(pods)
-                print(f"Average energy per pod for {nodeName}: {averageEnergy}")
+                print(f"Average energy per pod for {combination}: {averageEnergy}\n")
                 totalEnergyCombination += totalEnergy
             if totalEnergyCombination < minEnergy:
                 minEnergy = totalEnergyCombination
