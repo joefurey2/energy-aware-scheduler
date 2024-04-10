@@ -84,7 +84,7 @@ def runPods(v1, podTemplate, nodes):
         for podName in podNames:
             print(f"Waiting for pod {podName} to complete...")
             waitForPodCompletion(v1, podName)
-    time.sleep(10) # Maybe 10 would be better
+    time.sleep(20) # Maybe 10 would be better
     for nodeName, podNames in allPodNames.items():
         for podName in podNames:
             print(f"Getting metric for pod {podName}...")
