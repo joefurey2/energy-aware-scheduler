@@ -57,7 +57,7 @@ def waitForPodCompletion(v1, podName, namespace="default"):
     while True:
         podStatus = v1.read_namespaced_pod_status(podName, namespace).status.phase
         if podStatus == "Succeeded" or podStatus == "Failed":
-            time.sleep(5)
+            # time.sleep(5)
             break
         time.sleep(1)
 
@@ -80,7 +80,6 @@ def runPods(v1, podTemplate, nodes):
             createPod(v1, podTemplate, podName, nodeName)
             podNames.append(podName)
         allPodNames[nodeName]= podNames
-    print(allPodNames)
     for nodeName, podNames in allPodNames.items():
         for podName in podNames:
             print(f"Waiting for pod {podName} to complete...")
