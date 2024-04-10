@@ -72,6 +72,7 @@ def runPods(v1, podTemplate, nodes):
     for nodeName, numInstances in nodes.items():
         print(f"Running {numInstances} pod(s) on {nodeName}...")
         metrics[nodeName] = []
+        allPodNames[nodeName] = []
         podNames = []
         for j in range(numInstances):
             podName = f"stress-{nodeName}-{numInstances}instance-pod{j+1}"
