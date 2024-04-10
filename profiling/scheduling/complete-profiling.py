@@ -73,7 +73,7 @@ def runPods(v1, podTemplate, numInstances, nodes):
     allPodNames = {}
     for i in range(1, numInstances + 1):
         print(f"Testing {i} pods across {len(nodes)} nodes...")
-        metrics[str(i) + 'instance'] = []
+        metrics[str(i)] = []
         for combination in itertools.combinations(nodes, i):
             nodeCounts = {node: combination.count(node) for node in nodes}
             combinationMetrics = {}
@@ -104,7 +104,7 @@ def runPods(v1, podTemplate, numInstances, nodes):
                         combinationMetrics[combinationKey] = []
                     combinationMetrics[combinationKey].append({"podName": podName, "energy": energy})
             # print(f"Finished running pods on {nodeName}")
-            metrics[str(i) + 'instance'].append(combinationMetrics)
+            metrics[str(i)].append(combinationMetrics)
             allPodNames = {}
     return metrics
 
@@ -144,7 +144,7 @@ def main():
                     minEnergy = totalEnergyCombination
                     minEnergyCombination = combination
                 print(f"Combination: {combination}, Total energy: {totalEnergyCombination}")
-            print(f"Combination with minimum energy for {numInstances} instances: {minEnergyCombination}, Energy: {minEnergy}")
+        print(f"Combination with minimum energy for {numInstances} instances: {minEnergyCombination}, Energy: {minEnergy}")
 
     # totalEnergyAllNodes = 0
     # totalPodsAllNodes = 0
