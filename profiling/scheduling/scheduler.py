@@ -111,31 +111,30 @@ def main():
 
 
     metrics = runPods(v1, podTemplate, nodes)  # replace with your actual values
-    for nodeName, instances in metrics.items():
-        for numInstances, pods in instances.items():
-            print(f"Node: {nodeName}, Number of instances: {numInstances}")
-            totalEnergy = 0
-            for pod in pods:
-                print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
-                totalEnergy += float(pod['energy'])
-            print(f"Total energy for {numInstances} instances: {totalEnergy}")
+    print(metrics.items())
+    for nodeName, pods in metrics.items():
+        print(f"Node: {nodeName}")
+        totalEnergy = 0
+        for pod in pods:
+            print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
+            totalEnergy += float(pod['energy'])
+        print(f"Total energy for {nodeName}: {totalEnergy}")
+        averageEnergy = totalEnergy / len(pods)
+        print(f"Average energy per pod for {nodeName}: {averageEnergy}")
+
+        with open(f'{nodeName}.csv', 'w', newline='') as csvfile:
+            fieldnames = ['node_name', 'pod_name', 'pod_energy']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            totalEnergy = sum(float(pod['energy']) for pod in pods)
             averageEnergy = totalEnergy / len(pods)
-            print(f"Average energy per pod for {numInstances} instances: {averageEnergy}")
-
-            with open(f'{nodeName}-{numInstances}.csv', 'w', newline='') as csvfile:
-                fieldnames = ['node_name', 'num_instances', 'pod_name', 'pod_energy']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-                writer.writeheader()
-                totalEnergy = sum(float(pod['energy']) for pod in pods)
-                averageEnergy = totalEnergy / len(pods)
-                for pod in pods:
-                    writer.writerow({
-                        'node_name': nodeName,
-                        'num_instances': numInstances,
-                        'pod_name': pod['podName'],
-                        'pod_energy': pod['energy']
-                    })
+            for pod in pods:
+                writer.writerow({
+                    'node_name': nodeName,
+                    'pod_name': pod['podName'],
+                    'pod_energy': pod['energy']
+                })
                 # writer.writerow({
                 #     'num_instances': numInstances,
                 #     'pod_name': 'Total',
