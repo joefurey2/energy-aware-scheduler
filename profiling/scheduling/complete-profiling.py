@@ -76,14 +76,16 @@ def runPods(v1, podTemplate, numInstances, nodes):
         for combination in itertools.product(nodes, repeat=i):
             nodeCounts = {node: combination.count(node) for node in nodes}
             combinationMetrics = {}
+            counter = 1
             for nodeName, count in nodeCounts.items():
                 print(f"Running {count} pod(s) on {nodeName}...")
                 podNames = []
                 for j in range(count):
                     combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes)
-                    podName = f"instances{i}-{combinationKey}-pod{j+1}"
+                    podName = f"instances{i}-{combinationKey}-pod{counter}"
                     print(f"Creating pod {podName}...")
                     createPod(v1, podTemplate, podName, nodeName)
+                    counter += 1
                     podNames.append(podName)
                 allPodNames[nodeName] = podNames
             for nodeName, podNames in allPodNames.items():
