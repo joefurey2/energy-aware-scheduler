@@ -89,10 +89,9 @@ def runPods(v1, podTemplate, nodes):
             print(f"Getting metric for pod {podName}...")
             energy = getMetric(podName)
             metrics[nodeName].append({"podName": podName, "energy": energy})
-        print(f"Finished running pods on {nodeName}. Deleting pods...")
-        # for podName in podNames:
-        #     deletePod(v1, podName)
-        return metrics
+    print(f"Finished running pods on {nodeName}. Deleting pods...")
+
+    return metrics
 
 def main():
     parser = argparse.ArgumentParser()
