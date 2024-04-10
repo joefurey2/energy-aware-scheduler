@@ -48,15 +48,15 @@ def getMetric(podName):
     energy = prom.get_current_metric_value(metric)[0]['value'][1]
     return energy
 
-def createPod(v1, podTemplate, podName, namespace="default"):
+def createPod(v1, podTemplate, podName, nodeName, namespace="default"):
     podTemplate["metadata"]["name"] = podName
+    podTemplate["spec"]["nodeName"] = nodeName
     v1.create_namespaced_pod(body=podTemplate, namespace=namespace)
 
 def waitForPodCompletion(v1, podName, namespace="default"):
     while True:
         podStatus = v1.read_namespaced_pod_status(podName, namespace).status.phase
         if podStatus == "Succeeded" or podStatus == "Failed":
-            time.sleep(5) # Ensures pod has finished and closed before metric is taken
             break
         time.sleep(1)
 
@@ -66,47 +66,50 @@ def deletePod(v1, podName, namespace="default"):
     except client.exceptions.ApiException as e:
         print(f"Exception when calling CoreV1Api->delete_namespaced_pod: {e}")
 
-def runPods(v1, podTemplate, numInstances):
+def runPods(v1, podTemplate, nodes):
     metrics = {}
-    slept = False
-    podNames = []
-    for i in range(1, numInstances + 1):
-        print(f"Running {i} pod(s)...")
-        metrics[i] = []
+    allPodNames = []
+    for nodeName, numInstances in nodes.items():
+        print(f"Running {numInstances} pod(s) on {nodeName}...")
+        metrics[nodeName] = []
         podNames = []
-        for j in range(i):
-            podName = f"stress-{i}instance-pod{j+1}"
+        for j in range(numInstances):
+            podName = f"stress-{nodeName}-{numInstances}instance-pod{j+1}"
             print(f"Creating pod {podName}...")
-            createPod(v1, podTemplate, podName)
+            createPod(v1, podTemplate, podName, nodeName)
             podNames.append(podName)
-        for podName in podNames:
-            podName = f"stress-{i}instance-pod{j+1}"
-            print(f"Waiting for pod {podName} to complete...")
-            waitForPodCompletion(v1, podName)
-        time.sleep(5) # Maybe 10 would be better
+        allPodNames.extend(podNames)
+    for podName in allPodNames:
+        print(f"Waiting for pod {podName} to complete...")
+        waitForPodCompletion(v1, podName)
+    time.sleep(10) # Maybe 10 would be better
+    for nodeName, podNames in metrics.items():
         for podName in podNames:
             print(f"Getting metric for pod {podName}...")
             energy = getMetric(podName)
-            print("podName", podName, "energy", energy)
-            metrics[i].append({"podName": podName, "energy": energy})
+            metrics[nodeName].append({"podName": podName, "energy": energy})
+        print(f"Finished running pods on {nodeName}. Deleting pods...")
         for podName in podNames:
             deletePod(v1, podName)
-        print(f"Finished running {i} pod(s), deleted pods and cleanedup")
     return metrics
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("nodeName", help="the name of the node where the pods will be scheduled")
-    parser.add_argument("numInstances", type=int, help="the number of pod instances to create")
+    parser.add_argument('--nodes', nargs='+', required=True)
     args = parser.parse_args()
+
+    nodes = dict(zip(args.nodes[::2], map(int, args.nodes[1::2])))
 
     config.load_kube_config()
     v1 = client.CoreV1Api()
 
-    podTemplate["spec"]["nodeName"] = args.nodeName
-    podTemplate["metadata"]["labels"]["test"] = f"{args.nodeName}-{args.numInstances}" 
+    print(str(nodes.items()))
 
-    metrics = runPods(v1, podTemplate, args.numInstances)  # replace with your actual values
+    podTemplate["metadata"]["labels"]["test"] = f"scheduling-test" 
+    podTemplate["metadata"]["labels"]["nodes"] = f"{nodes.items()}" 
+
+
+    metrics = runPods(v1, podTemplate, nodes)  # replace with your actual values
     for numInstances, pods in metrics.items():
         print(f"Number of instances: {numInstances}")
         totalEnergy = 0
