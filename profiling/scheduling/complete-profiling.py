@@ -72,27 +72,27 @@ def runPods(v1, podTemplate, numInstances, nodes):
     metrics = {}
     allPodNames = {}
     for i in range(1, numInstances + 1):
+        print(f"Testing {i} pods across {len(nodes)} nodes...")
         metrics[str(i) + 'instance'] = []
         for combination in itertools.combinations(nodes, i):
             nodeCounts = {node: combination.count(node) for node in nodes}
             combinationMetrics = {}
             counter = 1
-            print(f"Testing {i} pods across {len(nodes)}...")
             for nodeName, count in nodeCounts.items():
                 if count > 0:
-                    print(f"Running {count} pod(s) on {nodeName}...")
+                    print(f"    Running {count} pod(s) on {nodeName}...")
                 podNames = []
                 for j in range(count):
                     combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes)
                     podName = f"instances{i}-{combinationKey}-pod{counter}"
-                    print(f"    Creating pod {podName}...")
+                    print(f"        Creating pod {podName}...")
                     createPod(v1, podTemplate, podName, nodeName)
                     counter +=1
                     podNames.append(podName)
                 allPodNames[nodeName] = podNames
             for nodeName, podNames in allPodNames.items():
                 for podName in podNames:
-                    print(f"    Waiting for pod {podName} to complete...")
+                    print(f"        Waiting for pod {podName} to complete...")
                     waitForPodCompletion(v1, podName)
             time.sleep(20) 
             for nodeName, podNames in allPodNames.items():
