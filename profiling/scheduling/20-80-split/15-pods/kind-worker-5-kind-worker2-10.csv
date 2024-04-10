@@ -1,0 +1,16 @@
+node_name,pod_name,pod_energy
+kind-worker,stress-kind-worker-5instance-pod1,158.64
+kind-worker,stress-kind-worker-5instance-pod2,166.092
+kind-worker,stress-kind-worker-5instance-pod3,154.89
+kind-worker,stress-kind-worker-5instance-pod4,158.397
+kind-worker,stress-kind-worker-5instance-pod5,155.988
+kind-worker2,stress-kind-worker2-10instance-pod1,184.011
+kind-worker2,stress-kind-worker2-10instance-pod2,184.347
+kind-worker2,stress-kind-worker2-10instance-pod3,172.518
+kind-worker2,stress-kind-worker2-10instance-pod4,177.468
+kind-worker2,stress-kind-worker2-10instance-pod5,174.495
+kind-worker2,stress-kind-worker2-10instance-pod6,182.454
+kind-worker2,stress-kind-worker2-10instance-pod7,183.15
+kind-worker2,stress-kind-worker2-10instance-pod8,181.623
+kind-worker2,stress-kind-worker2-10instance-pod9,179.37
+kind-worker2,stress-kind-worker2-10instance-pod10,170.442

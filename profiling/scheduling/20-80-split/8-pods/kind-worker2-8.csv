@@ -1,0 +1,9 @@
+node_name,pod_name,pod_energy
+kind-worker2,stress-kind-worker2-8instance-pod1,146.406
+kind-worker2,stress-kind-worker2-8instance-pod2,155.244
+kind-worker2,stress-kind-worker2-8instance-pod3,142.539
+kind-worker2,stress-kind-worker2-8instance-pod4,153.528
+kind-worker2,stress-kind-worker2-8instance-pod5,151.17
+kind-worker2,stress-kind-worker2-8instance-pod6,145.431
+kind-worker2,stress-kind-worker2-8instance-pod7,151.863
+kind-worker2,stress-kind-worker2-8instance-pod8,151.686
