@@ -72,14 +72,13 @@ def runPods(v1, podTemplate, nodes):
     for nodeName, numInstances in nodes.items():
         print(f"Running {numInstances} pod(s) on {nodeName}...")
         metrics[nodeName] = []
-        allPodNames[nodeName] = []
         podNames = []
         for j in range(numInstances):
             podName = f"stress-{nodeName}-{numInstances}instance-pod{j+1}"
             print(f"Creating pod {podName}...")
             createPod(v1, podTemplate, podName, nodeName)
             podNames.append(podName)
-        allPodNames[nodeName](podNames)
+        allPodNames[nodeName]= podNames
     for podName in allPodNames.items():
         for podName in podNames:
             print(f"Waiting for pod {podName} to complete...")
