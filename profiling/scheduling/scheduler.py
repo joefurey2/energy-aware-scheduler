@@ -106,7 +106,7 @@ def main():
     print(str(nodes.items()))
 
     podTemplate["metadata"]["labels"]["test"] = f"scheduling-test" 
-    podTemplate["metadata"]["labels"]["nodes"] = f"{nodes.items()}" 
+    # podTemplate["metadata"]["labels"]["nodes"] = f"{nodes.items()}" 
 
 
     metrics = runPods(v1, podTemplate, nodes)  # replace with your actual values
