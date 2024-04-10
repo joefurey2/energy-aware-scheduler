@@ -15,7 +15,6 @@ podTemplate = {
         }
     },
     "spec": {
-        "nodeName": "",
         "containers": [
             {
                 "name": "stress-ng-container",
@@ -89,7 +88,7 @@ def main():
     config.load_kube_config()
     v1 = client.CoreV1Api()
 
-    podTemplate = client.V1Pod()
+    podTemplate["metadata"]["labels"]["test"] = f"default-scheduling" 
 
     metrics = runPods(v1, podTemplate, numPods)
 
