@@ -80,7 +80,8 @@ def runPods(v1, podTemplate, numInstances, nodes):
                 print(f"Running {count} pod(s) on {nodeName}...")
                 podNames = []
                 for j in range(count):
-                    podName = f"stress-{nodeName}-{i}instance-pod{j+1}"
+                    combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes)
+                    podName = f"instances{i}-{combinationKey}-pod{j+1}"
                     print(f"Creating pod {podName}...")
                     createPod(v1, podTemplate, podName, nodeName)
                     podNames.append(podName)
