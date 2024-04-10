@@ -83,14 +83,14 @@ def runPods(v1, podTemplate, nodes):
         print(f"Waiting for pod {podName} to complete...")
         waitForPodCompletion(v1, podName)
     time.sleep(10) # Maybe 10 would be better
-    for nodeName, podNames in metrics.items():
+    for nodeName, podNames in nodes.items():
         for podName in podNames:
             print(f"Getting metric for pod {podName}...")
             energy = getMetric(podName)
             metrics[nodeName].append({"podName": podName, "energy": energy})
         print(f"Finished running pods on {nodeName}. Deleting pods...")
-        for podName in podNames:
-            deletePod(v1, podName)
+    for podName in podNames:
+        deletePod(v1, podName)
     return metrics
 
 def main():
@@ -110,26 +110,27 @@ def main():
 
 
     metrics = runPods(v1, podTemplate, nodes)  # replace with your actual values
-    for numInstances, pods in metrics.items():
-        print(f"Number of instances: {numInstances}")
-        totalEnergy = 0
-        for pod in pods:
-            print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
-            totalEnergy += float(pod['energy'])
-        print(f"Total energy for {numInstances} instances: {totalEnergy}")
-        averageEnergy = totalEnergy / len(pods)
-        print(f"Average energy per pod for {numInstances} instances: {averageEnergy}")
+    for nodeName, instances in metrics.items():
+        for numInstances, pods in instances.items():
+            print(f"Node: {nodeName}, Number of instances: {numInstances}")
+            totalEnergy = 0
+            for pod in pods:
+                print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
+                totalEnergy += float(pod['energy'])
+            print(f"Total energy for {numInstances} instances: {totalEnergy}")
+            averageEnergy = totalEnergy / len(pods)
+            print(f"Average energy per pod for {numInstances} instances: {averageEnergy}")
 
-        with open(f'{args.nodeName}-{args.numInstances}.csv', 'w', newline='') as csvfile:
-            fieldnames = ['num_instances', 'pod_name', 'pod_energy']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            with open(f'{nodeName}-{numInstances}.csv', 'w', newline='') as csvfile:
+                fieldnames = ['node_name', 'num_instances', 'pod_name', 'pod_energy']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-            writer.writeheader()
-            for numInstances, pods in metrics.items():
+                writer.writeheader()
                 totalEnergy = sum(float(pod['energy']) for pod in pods)
                 averageEnergy = totalEnergy / len(pods)
                 for pod in pods:
                     writer.writerow({
+                        'node_name': nodeName,
                         'num_instances': numInstances,
                         'pod_name': pod['podName'],
                         'pod_energy': pod['energy']
