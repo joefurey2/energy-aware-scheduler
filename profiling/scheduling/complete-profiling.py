@@ -77,31 +77,33 @@ def runPods(v1, podTemplate, numInstances, nodes):
             nodeCounts = {node: combination.count(node) for node in nodes}
             combinationMetrics = {}
             counter = 1
+            print(f"Testing {i} pods across {len(nodes)}...")
             for nodeName, count in nodeCounts.items():
-                print(f"Running {count} pod(s) on {nodeName}...")
+                if count > 0:
+                    print(f"Running {count} pod(s) on {nodeName}...")
                 podNames = []
                 for j in range(count):
                     combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes)
                     podName = f"instances{i}-{combinationKey}-pod{counter}"
-                    print(f"Creating pod {podName}...")
+                    print(f"    Creating pod {podName}...")
                     createPod(v1, podTemplate, podName, nodeName)
                     counter +=1
                     podNames.append(podName)
                 allPodNames[nodeName] = podNames
             for nodeName, podNames in allPodNames.items():
                 for podName in podNames:
-                    print(f"Waiting for pod {podName} to complete...")
+                    print(f"    Waiting for pod {podName} to complete...")
                     waitForPodCompletion(v1, podName)
             time.sleep(20) 
             for nodeName, podNames in allPodNames.items():
                 for podName in podNames:
-                    print(f"Getting metric for pod {podName}...")
+                    # print(f"Getting metric for pod {podName}...")
                     energy = getMetric(podName)
                     combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes)
                     if combinationKey not in combinationMetrics:
                         combinationMetrics[combinationKey] = []
                     combinationMetrics[combinationKey].append({"podName": podName, "energy": energy})
-            print(f"Finished running pods on {nodeName}")
+            # print(f"Finished running pods on {nodeName}")
             metrics[str(i) + 'instance'].append(combinationMetrics)
             allPodNames = {}
     return metrics
@@ -122,7 +124,7 @@ def main():
 
 
     metrics = runPods(v1, podTemplate, args.instances+1, nodes)  
-    print(metrics.items)
+    print(metrics.items())
     for numInstances, combinations in metrics.items():
         print(f"Number of pods: {numInstances}")
         minEnergy = float('inf')
@@ -130,20 +132,19 @@ def main():
         for combination in combinations:
             totalEnergyCombination = 0
             for combination, pods in combination.items():
-                print(f"Combination: {combination}")
                 totalEnergy = 0
                 for pod in pods:
-                    print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
+                    # print(f"Pod: {pod['podName']}, Energy: {pod['energy']}")
                     totalEnergy += float(pod['energy'])
                 print(f"Total energy for {combination}: {totalEnergy}")
-                averageEnergy = totalEnergy / len(pods)
-                print(f"Average energy per pod for {combination}: {averageEnergy}\n")
+                # averageEnergy = totalEnergy / len(pods)
+                # print(f"Average energy per pod for {combination}: {averageEnergy}\n")
                 totalEnergyCombination += totalEnergy
-            if totalEnergyCombination < minEnergy:
-                minEnergy = totalEnergyCombination
-                minEnergyCombination = combination
-            print(f"Combination: {combination}, Total energy: {totalEnergyCombination}")
-        print(f"Combination with minimum energy for {numInstances} instances: {minEnergyCombination}, Energy: {minEnergy}")
+                if totalEnergyCombination < minEnergy:
+                    minEnergy = totalEnergyCombination
+                    minEnergyCombination = combination
+                print(f"Combination: {combination}, Total energy: {totalEnergyCombination}")
+            print(f"Combination with minimum energy for {numInstances} instances: {minEnergyCombination}, Energy: {minEnergy}")
 
     # totalEnergyAllNodes = 0
     # totalPodsAllNodes = 0
