@@ -23,7 +23,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 26,
-  "iteration": 1712578875727,
+  "iteration": 1712759979845,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -148,7 +148,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "sum(kepler_container_package_joules_total{container_namespace=\"default\", pod_name=~\"low-stress-.*\"})",
+          "expr": "sum(kepler_container_package_joules_total{container_namespace=\"default\", pod_name=~\"stress-job-.*\"})",
           "format": "heatmap",
           "range": true,
           "refId": "A"
@@ -1009,7 +1009,7 @@
         {
           "datasource": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (pod_name, container_name, container_namespace, node) (irate(kepler_container_joules_total{pod_name!=\"system_processes\"}[1m]))",
+          "expr": "(irate(kepler_container_package_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{pod_name}}",
@@ -1017,7 +1017,7 @@
           "refId": "A"
         }
       ],
-      "title": "Pod Power Consumption (W) on node: kind-worker",
+      "title": "Pod Power Consumption (W) in default",
       "type": "timeseries"
     },
     {
@@ -1481,7 +1481,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1884,13 +1885,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "2024-04-10T16:00:45.000Z",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Kepler Exporter Dashboard",
   "uid": "NhnADUW4zIBM",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }
