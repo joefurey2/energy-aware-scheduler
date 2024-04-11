@@ -97,13 +97,11 @@ def runPods(v1, podTemplate, numInstances, nodes):
             time.sleep(20) 
             for nodeName, podNames in allPodNames.items():
                 for podName in podNames:
-                    # print(f"Getting metric for pod {podName}...")
                     energy = getMetric(podName)
                     combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes)
                     if combinationKey not in combinationMetrics:
                         combinationMetrics[combinationKey] = []
-                    combinationMetrics[combinationKey].append({"podName": podName, "energy": energy})
-            # print(f"Finished running pods on {nodeName}")
+                    combinationMetrics[combinationKey].append({"nodeName": nodeName, "podName": podName, "energy": energy})
             metrics[str(i)].append(combinationMetrics)
             allPodNames = {}
     return metrics
@@ -146,31 +144,25 @@ def main():
                 print(f"Combination: {combination}, Total energy: {totalEnergyCombination}")
         print(f"Combination with minimum energy for {numInstances} instances: {minEnergyCombination}, Energy: {minEnergy}")
 
-    # totalEnergyAllNodes = 0
-    # totalPodsAllNodes = 0
-    # for numInstances, combinations in metrics.items():
-    #     for combination in combinations:
-    #         for nodeName, pods in combination.items():
-    #             totalEnergyNode = sum(float(pod['energy']) for pod in pods)
-    #             totalEnergyAllNodes += totalEnergyNode
-    #             totalPodsAllNodes += len(pods)
-    # averageEnergyAllNodes = totalEnergyAllNodes / totalPodsAllNodes
-    # print(f"All Nodes, Total Energy: {totalEnergyAllNodes}, Average Energy: {averageEnergyAllNodes}")
 
 
-    # filename = '-'.join(f"{nodeName}-{numInstances}" for nodeName, numInstances in nodes.items()) + '.csv'
-    # with open(filename, 'w', newline='') as csvfile:
-    #     fieldnames = ['node_name', 'pod_name', 'pod_energy']
-    #     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        filename = f'{args.instances}.csv'
+        with open(filename, 'w', newline='') as csvfile:
+            fieldnames = ['numberOfInstances', 'combination', 'nodeName', 'podName', 'energyConsumption']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-    #     writer.writeheader()
-    #     for nodeName, pods in metrics.items():
-    #         for pod in pods:
-    #             writer.writerow({
-    #                 'node_name': nodeName,
-    #                 'pod_name': pod['podName'],
-    #                 'pod_energy': pod['energy']
-    #             })
+            writer.writeheader()
+            for numInstances, combinations in metrics.items():
+                for combinationMetrics in combinations:
+                    for combination, pods in combinationMetrics.items():
+                        for pod in pods:
+                            writer.writerow({
+                                'numberOfInstances': numInstances,
+                                'combination': combination,
+                                'nodeName': pod['nodeName'],
+                                'podName': pod['podName'],
+                                'energyConsumption': pod['energy']
+                            })
 
 if __name__ == "__main__":
     main()
