@@ -102,6 +102,7 @@ def runPods(v1, podTemplate, numInstances, nodes):
                     if combinationKey not in combinationMetrics:
                         combinationMetrics[combinationKey] = []
                     combinationMetrics[combinationKey].append({"nodeName": nodeName, "podName": podName, "energy": energy})
+                    deletePod(v1, podName)
             metrics[str(i)].append(combinationMetrics)
             allPodNames = {}
     return metrics
