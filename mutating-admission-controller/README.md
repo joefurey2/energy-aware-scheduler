@@ -32,3 +32,8 @@ First, port forward so you can interact from your cli
 
 - You can then push any schedule to the mac or get current optimal schedule
 
+To push a new schedule 
+'''curl -kv -d '{"1":{"kind-worker":0,"kind-worker2":1},"2":{"kind-worker":0,"kind-worker2":2},"3":{"kind-worker":0,"kind-worker2":3},"4":{"kind-worker":0,"kind-worker2":4},"5":{"kind-worker":1,"kind-worker2":4}}' https://localhost:8443/schedule'''
+
+To get the current schedule
+'''curl -k  https://localhost:8443/schedule'''
