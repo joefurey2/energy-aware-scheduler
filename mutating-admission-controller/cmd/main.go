@@ -95,6 +95,20 @@ func handleMutate(c *gin.Context) {
 	c.Writer.Write(mutated)
 }
 
+func handleSchedule(c *gin.Context) {
+    var schedule Schedule
+
+    if err := c.ShouldBindJSON(&schedule); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    // Process the schedule here
+    // ...
+
+    c.JSON(http.StatusOK, gin.H{"message": "Schedule received successfully"})
+}
+
 
 func main() {
 
@@ -102,6 +116,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/", handleRoot)
+	router.POST("/schedule")
 	router.POST("/mutate", handleMutate)
 	router.POST("/ranking", handleUpdate)
 	router.GET("/ranking", handleGetRanking)

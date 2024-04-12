@@ -115,7 +115,7 @@ def find_optimal_scheduling(metrics):
         optimal_combination = None
         for combinationMetrics in combinations:
             for combination, pods in combinationMetrics.items():
-                total_energy = sum(pod['energy'] for pod in pods)
+                total_energy = sum(float(pod['energy']) for pod in pods)
                 if total_energy < min_energy:
                     min_energy = total_energy
                     optimal_combination = combination
