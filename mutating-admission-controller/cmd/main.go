@@ -68,9 +68,7 @@ func handleSchedule(c *gin.Context) {
 
 	mutex.Lock()
 	for numInstances, nodeCounts := range schedule {
-		if _, exists := optimalSchedule[numInstances]; !exists {
-			optimalSchedule[numInstances] = make(map[string]int)
-		}
+	    optimalSchedule[numInstances] = make(map[string]int)
 		for node, count := range nodeCounts {
 			optimalSchedule[numInstances][node] += count
 		}
