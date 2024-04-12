@@ -1,0 +1,30 @@
+# A webhook configuration to forward all pod creation requests to the controller
+
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: mutating-admission-controller
+  labels:
+    app: mutating-admission-controller
+webhooks:
+  - name: mutating-admission-controller.default.svc.cluster.local
+    clientConfig:
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJME1ERXlOVEUxTkRFeU9Gb1hEVE0wTURFeU1qRTFOREV5T0Zvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTU01CkNMYlUwSHBVTlFhYmZiMGh5TkVpdVluN3NqVEtKMmF6Y3VlV3RYbG1tV3cvWjcyODI3TzgvYlU5ZWN6K0h6MFMKRE0ybVdoc0s5bXRjS1pzMDY0MEcvaWxhbnUyZHErang5VzNpY3p3OWd4bGw1c2l6ZTc1Z3ZJanRSYWVDbVQxTgovMlFxVjhuMC8rQytBaEtmNVp0WktmYXBVSkdmU1FjNXlGbEp2SCtQTVVOMlBXd2ZmOGQxZWZqVCs0OFovbTc2Cit3SGRhaGI5ZjQzM0plMHJpNmowNEZaN25HeUlpZFlWRGFvQ0xwQVIzRW4wL08yNGNMV3JtZEFDSFgvUnZ3bTMKRmlHNTRBd3dJb3R0RjBqVGFOTXhoTGtnR2hreEtENUNHMGZ3YTlFVnB4K0E1K00wcFA2ZHpENkU3YXZucno1dwo1cHZoWm15K2tNeUVCM09wYWY4Q0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZIRys1RDE5V1ZhbVg4SU1IVDBwMHUvOW9Gci9NQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBSGxQQ3hHdm1jeHV5ak1ZUnNsUwp1TjNNcDBvMzhaZ1BvenZQRUJYY2hyVUQxVmd1YnVWMXZ4S2dFSDhPclVpdmpmMjljYi85Rk9mSk1DRitRL3Y5CktzQXV4aXFVOWpMMkhzS1BBUWt4aEtGVnBkRG42dUxZZGd2WHpWdzJaYlloZThneXpFY2NXck13OHhLTjNvUFAKZ2tTbGJaMnByQlh5cmhRK3FaUW55cVlOQk9aVVlSbVFycTZDZDJTV25ncll6VlA5QmEvVjhCZ3k2aFR2dnJHWgp6SnhwSTZMRE9iWWxJVElnMGlJQVdLS2gweTJRL2Z6N0hPaUF0MXN6dGNWazVUbzBVdm15UWJxK292cVJrSFZECkd4R216V0ZpRnpQNWtwTVZLOXY5ak1QQll0RE5xd25xLzBhS2FQcUV2LzdkRzMwSmljaGRsMXl4MWMzSXZESEEKbzNNPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+      service:
+        name: mutating-admission-controller
+        namespace: default
+        path: "/mutate"
+        port: 443
+    rules:
+      - operations: ["CREATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    sideEffects: None
+    admissionReviewVersions: ["v1"]
+    timeoutSeconds: 5
+    reinvocationPolicy: Never
+    failurePolicy: Fail  # Fail for better debugging - do we want ignore in prod?
+    namespaceSelector:
+      matchLabels:
+        MAC: enabled
