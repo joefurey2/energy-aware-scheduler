@@ -4,6 +4,7 @@ from prometheus_api_client import PrometheusConnect
 import argparse
 import csv
 import itertools
+import requests
 
 config.load_kube_config()
 v1 = client.CoreV1Api()
@@ -128,7 +129,17 @@ def find_optimal_scheduling(metrics, nodes):
                     optimal_combination = node_counts
         optimal_scheduling[numInstances] = optimal_combination
 
+    print("Sending schedule to controller....")
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post('https://localhost:8443/schedule', headers=headers, data=json.dumps(optimal_scheduling))
+
+    if response.status_code != 200:
+        print(f"POST request failed with status code {response.status_code}")
+
     return optimal_scheduling
+
+
+
 
 def main():
     parser = argparse.ArgumentParser()
