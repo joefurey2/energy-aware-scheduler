@@ -1,0 +1,52 @@
+# This deploys an instance of our mutating admission controller
+# Also deploys a clusterIP service to make the controller accessible within the cluster
+
+# Service to make controller accessible within cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: mutating-admission-controller
+  labels:
+    app: mutating-admission-controller
+spec:
+  publishNotReadyAddresses: true
+  ports:
+    - port: 443
+      targetPort: 8443
+  selector:
+    app: mutating-admission-controller
+
+---
+# Deployment of controller - only 1 replica
+# This NEEDS to be deployed before the webhook config or will get stuck
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mutating-admission-controller
+  labels:
+    app: mutating-admission-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mutating-admission-controller
+  template:
+    metadata:
+      name: mutating-admission-controller
+      labels:
+        app: mutating-admission-controller
+    spec:
+      containers:
+        - name: controller
+        # Container pushed to local podman registry
+          image: localhost/ma-controller:latest
+          imagePullPolicy: Never
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 250m
+              memory: 64Mi
+
+
