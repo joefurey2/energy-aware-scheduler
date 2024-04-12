@@ -61,6 +61,8 @@ func MutateRequest(optimalSchedule map[int]map[string]int, body []byte) ([]byte,
             }
         }
 
+        log.Printf("affinity set to %s", bestNode)
+
         // Add node affinity to efficient node
         // At the moment, this schedules to node 1
         affinityPatch := map[string]interface{}{
