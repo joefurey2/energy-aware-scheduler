@@ -39,7 +39,7 @@ spec:
       containers:
         - name: controller
         # Container pushed to local podman registry
-          image: localhost/ma-controller:latest
+          image: ma-controller:latest
           imagePullPolicy: Never
           resources:
             limits:
