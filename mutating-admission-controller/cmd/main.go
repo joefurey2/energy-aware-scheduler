@@ -12,6 +12,8 @@ import (
 	mutate "github.com/joefurey2/mutating-admission-controller/pkg/mutate"
 )
 
+var podCounts = make(map[string]int)
+var optimalSchedule = make(map[string]int)
 
 // Any unknown path is handled by this function
 // Prevents XSS attacks and other errors
@@ -96,7 +98,6 @@ func handleMutate(c *gin.Context) {
 }
 
 func handleSchedule(c *gin.Context) {
-    var schedule Schedule
 
     if err := c.ShouldBindJSON(&schedule); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
