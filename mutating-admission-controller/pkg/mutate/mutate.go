@@ -10,12 +10,11 @@ import (
     corev1 "k8s.io/api/core/v1"
 )
 
-var podCounts = make(map[string]int)
 var totalInstances = 0
 
 // MutateRequest takes in a request body and returns a mutated request body
 // Note: to modify a pod, instruct k8s how to update the pod, not modify the pod directly
-func MutateRequest(optimalSchedule map[int]map[string]int, body []byte) ([]byte, error) {
+func MutateRequest(optimalSchedule map[int]map[string]int, body []byte, podCounts map[string]int) ([]byte, error) {
 
     log.Printf("Current pod counts: %v, Total instances: %d\n", podCounts, totalInstances)
     
@@ -54,7 +53,12 @@ func MutateRequest(optimalSchedule map[int]map[string]int, body []byte) ([]byte,
         var bestNode string
         var minDifference = math.MaxInt32
         for node, optimalCount := range optimalNodeCounts {
-            difference := int(math.Abs(float64(optimalCount - podCounts[node])))
+            currentCount := podCounts[node]
+            if currentCount >= optimalCount {
+                // Skip this node if scheduling another pod on it would exceed the optimal count
+                continue
+            }
+            difference := int(math.Abs(float64(optimalCount - currentCount - 1))) // Subtract 1 because we're adding a new pod
             if difference < minDifference {
                 minDifference = difference
                 bestNode = node
@@ -70,16 +74,16 @@ func MutateRequest(optimalSchedule map[int]map[string]int, body []byte) ([]byte,
             "path":  "/spec/affinity",
             "value": map[string]interface{}{
                 "nodeAffinity": map[string]interface{}{
+                    // requiredDuringSchedulingIgnoredDuringExecution - hard requirement
                     // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
-                    "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
-                        "nodeSelectorTerms": []map[string]interface{}{
-                            {
-                                "matchExpressions": []map[string]interface{}{
-                                    {
-                                        "key":      "kubernetes.io/hostname",
-                                        "operator": "In",
-                                        "values":   []string{bestNode},
-                                    },
+                    "preferredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
+                        "weight": 100,
+                        "preference": map[string]interface{}{
+                            "matchExpressions": []map[string]interface{}{
+                                {
+                                    "key":      "kubernetes.io/hostname",
+                                    "operator": "In",
+                                    "values":   []string{bestNode},
                                 },
                             },
                         },

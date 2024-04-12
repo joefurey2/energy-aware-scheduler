@@ -15,6 +15,7 @@ import (
 )
 
 var optimalSchedule = make(map[int]map[string]int)
+var podCounts = make(map[string]int)
 
 var mutex = &sync.Mutex{}
 
@@ -42,7 +43,7 @@ func handleMutate(c *gin.Context) {
 	}
 
 	// Mutate the request
-	mutated, err := mutate.MutateRequest(optimalSchedule, body)
+	mutated, err := mutate.MutateRequest(optimalSchedule, podCounts, body)
 	if err != nil {
 		log.Println(err)
 		c.Writer.WriteHeader(http.StatusInternalServerError)
@@ -67,11 +68,15 @@ func handleSchedule(c *gin.Context) {
 
 	mutex.Lock()
 	for numInstances, nodeCounts := range schedule {
-	    optimalSchedule[numInstances] = make(map[string]int)
+    	optimalSchedule[numInstances] = make(map[string]int)
 		for node, count := range nodeCounts {
 			optimalSchedule[numInstances][node] += count
-		}
+			if _, exists := podCounts[node]; !exists {
+				podCounts[node] = 0
+			}
+		}	
 	}
+	
 	mutex.Unlock()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Schedule received successfully"})
