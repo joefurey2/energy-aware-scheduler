@@ -14,7 +14,6 @@ import (
 	mutate "github.com/joefurey2/mutating-admission-controller/pkg/mutate"
 )
 
-// var podCounts = make(map[string]int)
 var optimalSchedule = make(map[int]map[string]int)
 
 var mutex = &sync.Mutex{}
@@ -43,7 +42,7 @@ func handleMutate(c *gin.Context) {
 	}
 
 	// Mutate the request
-	mutated, err := mutate.MutateRequest(nodeList, body)
+	mutated, err := mutate.MutateRequest(optimalSchedule, body)
 	if err != nil {
 		log.Println(err)
 		c.Writer.WriteHeader(http.StatusInternalServerError)

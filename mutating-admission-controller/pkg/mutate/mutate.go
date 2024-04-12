@@ -4,16 +4,22 @@ import (
     "encoding/json"
     "fmt"
     "log"
-
+    "math"
     admissionv1 "k8s.io/api/admission/v1"
     metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
     corev1 "k8s.io/api/core/v1"
 )
 
+var podCounts = make(map[string]int)
+var totalInstances = 0
+
 // MutateRequest takes in a request body and returns a mutated request body
 // Note: to modify a pod, instruct k8s how to update the pod, not modify the pod directly
-func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
+func MutateRequest(optimalSchedule map[int]map[string]int, body []byte) ([]byte, error) {
 
+    log.Printf("Current pod counts: %v, Total instances: %d\n", podCounts, totalInstances)
+    
+    totalInstances++
     // unmarshalls (byte string -> JSON) request into AdmissionReview struct
     admReview := admissionv1.AdmissionReview{}
     if err := json.Unmarshal(body, &admReview); err != nil {
@@ -42,90 +48,55 @@ func MutateRequest(nodeList map[string]int, body []byte) ([]byte, error) {
         // Used for modification
         p := []interface{}{}
 
-        efficientNodes := []string{}
-        // inefficientNodes := []string{} - May use this for anti-affinity
-        
-        // Find efficientNodes with value 1
-        for node, value := range nodeList {
-            if value == 1 {
-                efficientNodes = append(efficientNodes, node)
-            } 
-            // May use this for anti-affinity
-            // else if value == 3 {
-            //     inefficientNodes = append(inefficientNodes, node)
-            // }
+        optimalNodeCounts := optimalSchedule[totalInstances]
+
+        // Find the node with the least difference between the current number of pods and the optimal number of pods
+        var bestNode string
+        var minDifference = math.MaxInt32
+        for node, optimalCount := range optimalNodeCounts {
+            difference := int(math.Abs(float64(optimalCount - podCounts[node])))
+            if difference < minDifference {
+                minDifference = difference
+                bestNode = node
+            }
         }
 
-        log.Println(efficientNodes)
-        
-        // Check if there are efficent nodes specified
-        if len(efficientNodes) > 0 {
-
-            // Add node affinity to efficient node
-            // At the moment, this schedules to node 1
-            affinityPatch := map[string]interface{}{
-                "op":    "add",
-                "path":  "/spec/affinity",
-                "value": map[string]interface{}{
-                    "nodeAffinity": map[string]interface{}{
-                        // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
-                        "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
-                            "nodeSelectorTerms": []map[string]interface{}{
-                                {
-                                    "matchExpressions": []map[string]interface{}{
-                                        {
-                                            "key":      "node",
-                                            "operator": "In",
-                                            "values":   efficientNodes,
-                                        },
+        // Add node affinity to efficient node
+        // At the moment, this schedules to node 1
+        affinityPatch := map[string]interface{}{
+            "op":    "add",
+            "path":  "/spec/affinity",
+            "value": map[string]interface{}{
+                "nodeAffinity": map[string]interface{}{
+                    // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
+                    "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
+                        "nodeSelectorTerms": []map[string]interface{}{
+                            {
+                                "matchExpressions": []map[string]interface{}{
+                                    {
+                                        "key":      "node",
+                                        "operator": "In",
+                                        "values":   []string{bestNode},
                                     },
                                 },
                             },
                         },
                     },
                 },
-            }
-            
-            p = append(p, affinityPatch)
-        
-                // Add a label to the pod
-            labelPatch := map[string]string{
-                "op":    "add",
-                "path":  "/metadata/labels/modified",
-                "value": "modifiedTo" + efficientNodes[0],
-            }
-            p = append(p, labelPatch)
+            },
         }
         
-        // // Check if there are inefficient nodes exists
-        // if len(inefficientNodes) > 0 {
-
-        //     // Add node affinity to efficient node
-        //     // At the moment, this schedules to node 1
-        //     affinityPatch := map[string]interface{}{
-        //         "op":    "add",
-        //         "path":  "/spec/affinity",
-        //         "value": map[string]interface{}{
-        //             "nodeAffinity": map[string]interface{}{
-        //                 // requiredDuringSchedulingIgnoredDuringExecution - enforces pods to be scheduled on given nodes
-        //                 "preferredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
-        //                     "nodeSelectorTerms": []map[string]interface{}{
-        //                         {
-        //                             "matchExpressions": []map[string]interface{}{
-        //                                 {
-        //                                     "key":      "node",
-        //                                     "operator": "In",
-        //                                     "values":   inefficientNodes,
-        //                                 },
-        //                             },
-        //                         },
-        //                     },
-        //                 },
-        //             },
-        //         },
-        //     }
-        //     p = append(p, affinityPatch)
-        // }   
+        p = append(p, affinityPatch)
+    
+            // Add a label to the pod
+        labelPatch := map[string]string{
+            "op":    "add",
+            "path":  "/metadata/labels/modified",
+            "value": "modifiedTo" + bestNode,
+        }
+        p = append(p, labelPatch)
+        
+        
 
 		// Marshal patch before return to API server
 		resp.Patch, err = json.Marshal(p)
