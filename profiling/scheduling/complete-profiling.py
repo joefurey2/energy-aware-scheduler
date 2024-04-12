@@ -107,7 +107,7 @@ def runPods(v1, podTemplate, numInstances, nodes):
             allPodNames = {}
     return metrics
 
-def find_optimal_scheduling(metrics):
+def find_optimal_scheduling(metrics, nodes):
     optimal_scheduling = {}
 
     for numInstances, combinations in metrics.items():
@@ -118,7 +118,7 @@ def find_optimal_scheduling(metrics):
                 total_energy = sum(float(pod['energy']) for pod in pods)
                 if total_energy < min_energy:
                     min_energy = total_energy
-                    node_counts = {}
+                    node_counts = {node: 0 for node in nodes}
                     for pod in pods:
                         node = pod['nodeName']
                         if node in node_counts:
@@ -146,7 +146,7 @@ def main():
 
 
     metrics = runPods(v1, podTemplate, args.instances+1, nodes)  
-    schedule = find_optimal_scheduling(metrics)
+    schedule = find_optimal_scheduling(metrics, nodes)
     print(schedule.items())
     for numInstances, combinations in metrics.items():
         print(f"Number of pods: {numInstances}")

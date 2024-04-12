@@ -7,13 +7,17 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sync"
 	"time"
+
 	"github.com/gin-gonic/gin"
 	mutate "github.com/joefurey2/mutating-admission-controller/pkg/mutate"
 )
 
-var podCounts = make(map[string]int)
-var optimalSchedule = make(map[string]int)
+// var podCounts = make(map[string]int)
+var optimalSchedule = make(map[int]map[string]int)
+
+var mutex = &sync.Mutex{}
 
 // Any unknown path is handled by this function
 // Prevents XSS attacks and other errors
@@ -99,13 +103,23 @@ func handleMutate(c *gin.Context) {
 
 func handleSchedule(c *gin.Context) {
 
+    var schedule map[int]map[string]int
+
     if err := c.ShouldBindJSON(&schedule); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
-    // Process the schedule here
-    // ...
+    mutex.Lock()
+    for numInstances, nodeCounts := range schedule {
+        if _, exists := optimalSchedule[numInstances]; !exists {
+            optimalSchedule[numInstances] = make(map[string]int)
+        }
+        for node, count := range nodeCounts {
+            optimalSchedule[numInstances][node] += count
+        }
+    }
+    mutex.Unlock()
 
     c.JSON(http.StatusOK, gin.H{"message": "Schedule received successfully"})
 }
@@ -117,7 +131,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/", handleRoot)
-	router.POST("/schedule")
+	router.POST("/schedule", handleSchedule)
 	router.POST("/mutate", handleMutate)
 	router.POST("/ranking", handleUpdate)
 	router.GET("/ranking", handleGetRanking)
