@@ -76,15 +76,12 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
                 "nodeAffinity": map[string]interface{}{
                     // requiredDuringSchedulingIgnoredDuringExecution - hard requirement
                     // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
-                    "preferredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
-                        "weight": 100,
-                        "preference": map[string]interface{}{
-                            "matchExpressions": []map[string]interface{}{
-                                {
-                                    "key":      "kubernetes.io/hostname",
-                                    "operator": "In",
-                                    "values":   []string{bestNode},
-                                },
+                    "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
+                        "matchExpressions": []map[string]interface{}{
+                            {
+                                "key":      "kubernetes.io/hostname",
+                                "operator": "In",
+                                "values":   []string{bestNode},
                             },
                         },
                     },
