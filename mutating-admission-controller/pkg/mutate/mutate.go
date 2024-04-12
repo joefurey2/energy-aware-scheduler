@@ -76,7 +76,7 @@ func MutateRequest(optimalSchedule map[int]map[string]int, body []byte) ([]byte,
                             {
                                 "matchExpressions": []map[string]interface{}{
                                     {
-                                        "key":      "node",
+                                        "key":      "kubernetes.io/hostname",
                                         "operator": "In",
                                         "values":   []string{bestNode},
                                     },
