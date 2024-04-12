@@ -118,7 +118,7 @@ def find_optimal_scheduling(metrics):
                 total_energy = sum(float(pod['energy']) for pod in pods)
                 if total_energy < min_energy:
                     min_energy = total_energy
-                    optimal_combination = combination
+                    optimal_combination = {pod['node']: pod['count'] for pod in pods}
         optimal_scheduling[numInstances] = optimal_combination
 
     return optimal_scheduling
