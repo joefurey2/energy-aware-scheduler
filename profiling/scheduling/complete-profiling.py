@@ -132,7 +132,7 @@ def find_optimal_scheduling(metrics, nodes):
 
     print("Sending schedule to controller....")
     headers = {'Content-Type': 'application/json'}
-    response = requests.post('https://localhost:8443/schedule', headers=headers, data=json.dumps(optimal_scheduling))
+    response = requests.post('https://localhost:8443/schedule', headers=headers, data=json.dumps(optimal_scheduling), verify=False)
 
     if response.status_code != 200:
         print(f"POST request failed with status code {response.status_code}")
