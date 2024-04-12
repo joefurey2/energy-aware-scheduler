@@ -14,7 +14,7 @@ var totalInstances = 0
 
 // MutateRequest takes in a request body and returns a mutated request body
 // Note: to modify a pod, instruct k8s how to update the pod, not modify the pod directly
-func MutateRequest(optimalSchedule map[int]map[string]int, body []byte, podCounts map[string]int) ([]byte, error) {
+func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]int, body []byte) ([]byte, error) {
 
     log.Printf("Current pod counts: %v, Total instances: %d\n", podCounts, totalInstances)
     
