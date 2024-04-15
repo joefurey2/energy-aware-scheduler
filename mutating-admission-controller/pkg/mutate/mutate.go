@@ -94,34 +94,33 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
                         },
                     },
                 },
-            }
-        
+            }        
             p = append(p, affinityPatch)
-        
-                // Add a label to the pod
+    
+            // Add a label to the pod
             labelPatch := map[string]string{
                 "op":    "add",
                 "path":  "/metadata/labels/modified",
                 "value": "modifiedTo" + bestNode,
             }
             p = append(p, labelPatch)
-            
-            
+        }       
 
-            // Marshal patch before return to API server
-            resp.Patch, err = json.Marshal(p)
 
-            resp.Result = &metav1.Status{
-                Status: "Success",
-            }
+        // Marshal patch before return to API server
+        resp.Patch, err = json.Marshal(p)
 
-            admReview.Response = &resp
-            // marshall to JSON so we can return the AdmissionReview
-            responseBody, err = json.Marshal(admReview)
-            if err != nil {
-                return nil, err 
-            }
+        resp.Result = &metav1.Status{
+            Status: "Success",
         }
+
+        admReview.Response = &resp
+        // marshall to JSON so we can return the AdmissionReview
+        responseBody, err = json.Marshal(admReview)
+        if err != nil {
+            return nil, err 
+        }
+        
     }
 
 	return responseBody, nil
