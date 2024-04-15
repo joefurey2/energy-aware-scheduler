@@ -115,10 +115,8 @@ def writeSchedulingToCSV(filename, schedulingType, scheduling):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--instances', type=int, required=True)
-    parser.add_argument('--nodes', nargs='+', required=True)
+    # parser.add_argument('--nodes', nargs='+', required=True)
     args = parser.parse_args()
-
-    nodes = args.nodes
 
     config.load_kube_config()
     v1 = client.CoreV1Api()
