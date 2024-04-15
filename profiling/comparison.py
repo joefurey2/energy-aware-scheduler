@@ -51,7 +51,6 @@ def getMetric(podName):
 
 def createPod(v1, podTemplate, podName, nodeName, namespace="default"):
     podTemplate["metadata"]["name"] = podName
-    podTemplate["spec"]["nodeName"] = nodeName
     v1.create_namespaced_pod(body=podTemplate, namespace=namespace)
 
 def waitForPodCompletion(v1, podName):
