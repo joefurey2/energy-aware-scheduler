@@ -45,10 +45,3 @@ vim -> find deployment and add --kubelet-insecure-tls=true to args
 Json model: https://raw.githubusercontent.com/sustainable-computing-io/kepler/main/grafana-dashboards/Kepler-Exporter.json
 
 
-# To use and install Jmeter
-
-Need to sudo dnf install java-17-openjdk
-
-Need to install jmeter binary from https://jmeter.apache.org/download_jmeter.cgi
-
-Use jmeter to run!

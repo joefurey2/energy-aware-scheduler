@@ -86,7 +86,7 @@ def runPods(v1, podTemplate, numInstances, nodes):
         if nodeName is not None:
             energy = getMetric(podName)
             metrics.append({"podName": podName, "nodeName": nodeName, "energy": energy})
-            totalEnergy += energy
+            totalEnergy += float(energy)
         # deletePod(v1, podName)
 
     return totalEnergy, metrics
