@@ -49,7 +49,7 @@ def getMetric(podName):
     energy = prom.get_current_metric_value(metric)[0]['value'][1]
     return energy
 
-def createPod(v1, podTemplate, podName, nodeName, namespace="default"):
+def createPod(v1, podTemplate, podName, namespace="default"):
     podTemplate["metadata"]["name"] = podName
     v1.create_namespaced_pod(body=podTemplate, namespace=namespace)
 
