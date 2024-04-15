@@ -45,33 +45,33 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
         // Used for modification
         p := []interface{}{}
 
-        optimalNodeCounts := optimalSchedule[*totalInstances]
-
-        // Find the node with the least difference between the current number of pods and the optimal number of pods
-        var bestNode string
-        var minDifference = math.MaxInt32
-        for node, optimalCount := range optimalNodeCounts {
-            currentCount := podCounts[node]
-            if currentCount >= optimalCount {
-                // Skip this node if scheduling another pod on it would exceed the optimal count
-                continue
-            }
-            difference := int(math.Abs(float64(optimalCount - currentCount - 1))) // Subtract 1 because we're adding a new pod
-            if difference < minDifference {
-                minDifference = difference
-                bestNode = node
-            }
-        }
-
-        podCounts[bestNode]++
-
-        log.Printf("affinity set to %s", bestNode)
-
         labels := pod.GetLabels()
+
 
         // Check if the pod has the label "scheduling=energy-aware"
         if value, ok := labels["scheduling"]; ok && value == "energy-aware" {
             *totalInstances++
+
+            optimalNodeCounts := optimalSchedule[*totalInstances]
+            // Find the node with the least difference between the current number of pods and the optimal number of pods
+            var bestNode string
+            var minDifference = math.MaxInt32
+            for node, optimalCount := range optimalNodeCounts {
+                currentCount := podCounts[node]
+                if currentCount >= optimalCount {
+                    // Skip this node if scheduling another pod on it would exceed the optimal count
+                    continue
+                }
+                difference := int(math.Abs(float64(optimalCount - currentCount - 1))) // Subtract 1 because we're adding a new pod
+                if difference < minDifference {
+                    minDifference = difference
+                    bestNode = node
+                }
+            }
+
+            podCounts[bestNode]++
+            log.Printf("affinity set to %s", bestNode)
+
             if bestNode != "" {
                 // Add node affinity to efficient node
                 affinityPatch := map[string]interface{}{
