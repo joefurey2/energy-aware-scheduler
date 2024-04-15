@@ -16,8 +16,14 @@ import (
 
 var optimalSchedule = make(map[int]map[string]int)
 var podCounts = make(map[string]int)
+var totalInstances = 0
 
 var mutex = &sync.Mutex{}
+
+type ScheduleInfo struct {
+    PodCounts      map[string]int `json:"podCounts"`
+    TotalInstances int            `json:"totalInstances"`
+}
 
 // Any unknown path is handled by this function
 // Prevents XSS attacks and other errors
@@ -25,8 +31,6 @@ func handleRoot(c *gin.Context) {
 	log.Println("Root request!")
 	fmt.Fprint(c.Writer, "hello %q", html.EscapeString(c.Request.URL.Path))
 }
-
-var nodeList map[string]int
 
 /*
 Admission controller recieves admission requests from the kube-api server
@@ -43,7 +47,7 @@ func handleMutate(c *gin.Context) {
 	}
 
 	// Mutate the request
-	mutated, err := mutate.MutateRequest(optimalSchedule, podCounts, body)
+	mutated, err := mutate.MutateRequest(optimalSchedule, podCounts, totalInstances, body)
 	if err != nil {
 		log.Println(err)
 		c.Writer.WriteHeader(http.StatusInternalServerError)
@@ -76,7 +80,8 @@ func handleSchedule(c *gin.Context) {
 			}
 		}	
 	}
-	
+	totalInstances = 0
+
 	mutex.Unlock()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Schedule received successfully"})
@@ -96,6 +101,26 @@ func handleGetSchedule(c *gin.Context) {
 	c.Writer.Write(rankingJSON)
 }
 
+// Endpoint to return current ranking of nodes stored in controller
+func handleCurrentSchedule(c *gin.Context) {
+    
+	info := ScheduleInfo{
+        PodCounts:      podCounts,
+        TotalInstances: totalInstances,
+    }
+
+    rankingJSON, err := json.Marshal(info)
+    if err != nil {
+        log.Println(err)
+        c.Writer.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+	c.Writer.Header().Set("Content-Type", "application/json")
+	c.Writer.WriteHeader(http.StatusOK)
+	c.Writer.Write(rankingJSON)
+}
+
 func main() {
 
 	log.Println("Starting server...")
@@ -104,6 +129,7 @@ func main() {
 	router.GET("/", handleRoot)
 	router.POST("/schedule", handleSchedule)
 	router.GET("/schedule", handleGetSchedule)
+	router.GET("/currentSchedule", handleCurrentSchedule)
 	router.POST("/mutate", handleMutate)
 
 	s := &http.Server{
