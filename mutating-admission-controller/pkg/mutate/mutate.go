@@ -17,7 +17,6 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
 
     log.Printf("Current pod counts: %v, Total instances: %d\n", podCounts, totalInstances)
     
-    totalInstances++
     // unmarshalls (byte string -> JSON) request into AdmissionReview struct
     admReview := admissionv1.AdmissionReview{}
     if err := json.Unmarshal(body, &admReview); err != nil {

@@ -47,6 +47,7 @@ func handleMutate(c *gin.Context) {
 	}
 
 	// Mutate the request
+	totalInstances++
 	mutated, err := mutate.MutateRequest(optimalSchedule, podCounts, totalInstances, body)
 	if err != nil {
 		log.Println(err)
