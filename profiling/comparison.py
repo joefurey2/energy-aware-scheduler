@@ -122,9 +122,11 @@ def main():
 
     podTemplate["metadata"]["labels"]["scheduling"] = f"standard" 
     standardScheduling = runPods(v1, podTemplate, args.instances+1, "standard") 
+    print(standardScheduling)
 
     podTemplate["metadata"]["labels"]["scheduling"] = f"energy-aware" 
     energyAwareScheduling = runPods(v1, podTemplate, args.instances+1, "energy-aware") 
+    print(energyAwareScheduling)
 
     standardTotal, standardAverage = calculateEnergy(standardScheduling)
     energyAwareTotal, energyAwareAverage = calculateEnergy(energyAwareScheduling)
