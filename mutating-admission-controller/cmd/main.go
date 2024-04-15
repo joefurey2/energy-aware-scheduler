@@ -77,10 +77,9 @@ func handleSchedule(c *gin.Context) {
     	optimalSchedule[numInstances] = make(map[string]int)
 		for node, count := range nodeCounts {
 			optimalSchedule[numInstances][node] += count
-			if _, exists := podCounts[node]; !exists {
-				podCounts[node] = 0
-			}
-		}	
+			podCounts[node] = 0
+
+		}
 	}
 	totalInstances = 0
 
