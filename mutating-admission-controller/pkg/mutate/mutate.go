@@ -67,57 +67,61 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
 
         log.Printf("affinity set to %s", bestNode)
 
-        // Add node affinity to efficient node
-        // At the moment, this schedules to node 1
-        affinityPatch := map[string]interface{}{
-            "op":    "add",
-            "path":  "/spec/affinity",
-            "value": map[string]interface{}{
-                "nodeAffinity": map[string]interface{}{
-                    // requiredDuringSchedulingIgnoredDuringExecution - hard requirement
-                    // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
-                    "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
-                        "nodeSelectorTerms": []map[string]interface{}{
-                            {
-                                "matchExpressions": []map[string]interface{}{
-                                    {
-                                        "key":      "kubernetes.io/hostname",
-                                        "operator": "In",
-                                        "values":   []string{bestNode},
+        labels := pod.GetLabels()
+
+        // Check if the pod has the label "scheduling=energy-aware"
+        if value, ok := labels["scheduling"]; ok && value == "energy-aware" {
+            // Add node affinity to efficient node
+            affinityPatch := map[string]interface{}{
+                "op":    "add",
+                "path":  "/spec/affinity",
+                "value": map[string]interface{}{
+                    "nodeAffinity": map[string]interface{}{
+                        // requiredDuringSchedulingIgnoredDuringExecution - hard requirement
+                        // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
+                        "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
+                            "nodeSelectorTerms": []map[string]interface{}{
+                                {
+                                    "matchExpressions": []map[string]interface{}{
+                                        {
+                                            "key":      "kubernetes.io/hostname",
+                                            "operator": "In",
+                                            "values":   []string{bestNode},
+                                        },
                                     },
                                 },
                             },
                         },
                     },
                 },
-            },
+            }
+        
+            p = append(p, affinityPatch)
+        
+                // Add a label to the pod
+            labelPatch := map[string]string{
+                "op":    "add",
+                "path":  "/metadata/labels/modified",
+                "value": "modifiedTo" + bestNode,
+            }
+            p = append(p, labelPatch)
+            
+            
+
+            // Marshal patch before return to API server
+            resp.Patch, err = json.Marshal(p)
+
+            resp.Result = &metav1.Status{
+                Status: "Success",
+            }
+
+            admReview.Response = &resp
+            // marshall to JSON so we can return the AdmissionReview
+            responseBody, err = json.Marshal(admReview)
+            if err != nil {
+                return nil, err 
+            }
         }
-        
-        p = append(p, affinityPatch)
-    
-            // Add a label to the pod
-        labelPatch := map[string]string{
-            "op":    "add",
-            "path":  "/metadata/labels/modified",
-            "value": "modifiedTo" + bestNode,
-        }
-        p = append(p, labelPatch)
-        
-        
-
-		// Marshal patch before return to API server
-		resp.Patch, err = json.Marshal(p)
-
-		resp.Result = &metav1.Status{
-			Status: "Success",
-		}
-
-		admReview.Response = &resp
-		// marshall to JSON so we can return the AdmissionReview
-		responseBody, err = json.Marshal(admReview)
-		if err != nil {
-			return nil, err 
-		}
     }
 
 	return responseBody, nil
