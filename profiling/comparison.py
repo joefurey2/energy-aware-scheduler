@@ -73,7 +73,7 @@ def deletePod(v1, podName, namespace="default"):
 def runPods(v1, podTemplate, numInstances, schedulingType):
     metrics = []
     allPodNames = []
-    for i in range(numInstances):
+    for i in range(numInstances - 1):
         podName = f"{schedulingType}-pod-{i}"
         print(f"Creating pod {podName}...")
         createPod(v1, podTemplate, podName)

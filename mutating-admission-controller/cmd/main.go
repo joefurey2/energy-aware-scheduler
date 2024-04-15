@@ -54,7 +54,7 @@ func handleMutate(c *gin.Context) {
 		return
 	}
 
-	log.Println("mutated!!")
+    log.Printf("Current pod counts: %v, Total instances: %d\n", podCounts, totalInstances)
 
 	// Send back mutated admission controller
 	c.Writer.WriteHeader(http.StatusOK)
