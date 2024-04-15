@@ -15,7 +15,7 @@ import (
 // Note: to modify a pod, instruct k8s how to update the pod, not modify the pod directly
 func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]int, totalInstances *int, body []byte) ([]byte, error) {
 
-    log.Printf("Current pod counts: %v, Total instances: %d\n", podCounts, totalInstances)
+    log.Printf("Current pod counts: %v, Total instances: %d\n", podCounts, *totalInstances)
     
     // unmarshalls (byte string -> JSON) request into AdmissionReview struct
     admReview := admissionv1.AdmissionReview{}
