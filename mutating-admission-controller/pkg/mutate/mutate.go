@@ -73,39 +73,49 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
 
         // Check if the pod has the label "scheduling=energy-aware"
         if value, ok := labels["scheduling"]; ok && value == "energy-aware" {
-            // Add node affinity to efficient node
-            affinityPatch := map[string]interface{}{
-                "op":    "add",
-                "path":  "/spec/affinity",
-                "value": map[string]interface{}{
-                    "nodeAffinity": map[string]interface{}{
-                        // requiredDuringSchedulingIgnoredDuringExecution - hard requirement
-                        // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
-                        "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
-                            "nodeSelectorTerms": []map[string]interface{}{
-                                {
-                                    "matchExpressions": []map[string]interface{}{
-                                        {
-                                            "key":      "kubernetes.io/hostname",
-                                            "operator": "In",
-                                            "values":   []string{bestNode},
+            if bestNode != "" {
+                // Add node affinity to efficient node
+                affinityPatch := map[string]interface{}{
+                    "op":    "add",
+                    "path":  "/spec/affinity",
+                    "value": map[string]interface{}{
+                        "nodeAffinity": map[string]interface{}{
+                            // requiredDuringSchedulingIgnoredDuringExecution - hard requirement
+                            // preferredDuringSchedulingIgnoredDuringExecution - This can be used to give a weighting instesd of enforcing onto a single node
+                            "requiredDuringSchedulingIgnoredDuringExecution": map[string]interface{}{
+                                "nodeSelectorTerms": []map[string]interface{}{
+                                    {
+                                        "matchExpressions": []map[string]interface{}{
+                                            {
+                                                "key":      "kubernetes.io/hostname",
+                                                "operator": "In",
+                                                "values":   []string{bestNode},
+                                            },
                                         },
                                     },
                                 },
                             },
                         },
                     },
-                },
-            }        
-            p = append(p, affinityPatch)
-    
-            // Add a label to the pod
-            labelPatch := map[string]string{
-                "op":    "add",
-                "path":  "/metadata/labels/modified",
-                "value": "modifiedTo" + bestNode,
+                }        
+                p = append(p, affinityPatch)
+        
+                // Add a label to the pod
+                labelPatch := map[string]string{
+                    "op":    "add",
+                    "path":  "/metadata/labels/modified",
+                    "value": "modifiedTo" + bestNode,
+                }
+                p = append(p, labelPatch)
+            } else {
+                // Add a label to the pod
+                labelPatch := map[string]string{
+                    "op":    "add",
+                    "path":  "/metadata/labels/modified",
+                    "value": "notModifiedAsOptimalNotProvided",
+                }
+                p = append(p, labelPatch)
             }
-            p = append(p, labelPatch)
         }       
 
 
