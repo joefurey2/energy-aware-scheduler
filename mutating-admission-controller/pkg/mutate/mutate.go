@@ -65,6 +65,8 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
             }
         }
 
+        podCounts[bestNode]++
+
         log.Printf("affinity set to %s", bestNode)
 
         labels := pod.GetLabels()
