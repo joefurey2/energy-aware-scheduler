@@ -70,11 +70,11 @@ def deletePod(v1, podName, namespace="default"):
     except client.exceptions.ApiException as e:
         print(f"Exception when calling CoreV1Api->delete_namespaced_pod: {e}")
 
-def runPods(v1, podTemplate, numInstances, nodes):
+def runPods(v1, podTemplate, numInstances, schedulingType):
     metrics = []
     allPodNames = []
     for i in range(numInstances):
-        podName = f"pod{i}"
+        podName = f"{schedulingType}-pod-{i}"
         print(f"Creating pod {podName}...")
         createPod(v1, podTemplate, podName)
         allPodNames.append(podName)
@@ -125,10 +125,10 @@ def main():
 
 
     podTemplate["metadata"]["labels"]["scheduling"] = f"standard" 
-    standardScheduling = runPods(v1, podTemplate, args.instances+1, nodes) 
+    standardScheduling = runPods(v1, podTemplate, args.instances+1, "standard") 
 
     podTemplate["metadata"]["labels"]["scheduling"] = f"energy-aware" 
-    energyAwareScheduling = runPods(v1, podTemplate, args.instances+1, nodes) 
+    energyAwareScheduling = runPods(v1, podTemplate, args.instances+1, "energy-aware") 
 
     standardTotal, standardAverage = calculateEnergy(standardScheduling)
     energyAwareTotal, energyAwareAverage = calculateEnergy(energyAwareScheduling)
