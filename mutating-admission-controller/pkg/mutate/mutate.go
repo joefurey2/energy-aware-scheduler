@@ -13,7 +13,7 @@ import (
 
 // MutateRequest takes in a request body and returns a mutated request body
 // Note: to modify a pod, instruct k8s how to update the pod, not modify the pod directly
-func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]int, totalInstances int, body []byte) ([]byte, error) {
+func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]int, totalInstances *int, body []byte) ([]byte, error) {
 
     log.Printf("Current pod counts: %v, Total instances: %d\n", podCounts, totalInstances)
     
@@ -45,7 +45,7 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
         // Used for modification
         p := []interface{}{}
 
-        optimalNodeCounts := optimalSchedule[totalInstances]
+        optimalNodeCounts := optimalSchedule[*totalInstances]
 
         // Find the node with the least difference between the current number of pods and the optimal number of pods
         var bestNode string
@@ -71,6 +71,7 @@ func MutateRequest(optimalSchedule map[int]map[string]int, podCounts map[string]
 
         // Check if the pod has the label "scheduling=energy-aware"
         if value, ok := labels["scheduling"]; ok && value == "energy-aware" {
+            *totalInstances++
             if bestNode != "" {
                 // Add node affinity to efficient node
                 affinityPatch := map[string]interface{}{

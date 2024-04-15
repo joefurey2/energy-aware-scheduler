@@ -92,7 +92,7 @@ def runPods(v1, podTemplate, numInstances, schedulingType):
     return totalEnergy, metrics
 
 def calculateEnergy(scheduling):
-    totalEnergy = sum(pod['energy'] for pod in scheduling)
+    totalEnergy = sum(float(pod['energy']) for pod in scheduling)
     averageEnergy = totalEnergy / len(scheduling) if scheduling else 0
     return totalEnergy, averageEnergy
 
