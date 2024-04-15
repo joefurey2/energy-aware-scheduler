@@ -73,26 +73,24 @@ def deletePod(v1, podName, namespace="default"):
 def runPods(v1, podTemplate, numInstances, schedulingType):
     metrics = []
     allPodNames = []
-    for i in range(numInstances - 1):
+    for i in range(1, numInstances):
         podName = f"{schedulingType}-pod-{i}"
         print(f"Creating pod {podName}...")
         createPod(v1, podTemplate, podName)
         allPodNames.append(podName)
 
-    totalEnergy = 0
     for podName in allPodNames:
         print(f"Waiting for pod {podName} to complete...")
         nodeName = waitForPodCompletion(v1, podName)
         if nodeName is not None:
             energy = getMetric(podName)
             metrics.append({"podName": podName, "nodeName": nodeName, "energy": energy})
-            totalEnergy += float(energy)
         # deletePod(v1, podName)
 
-    return totalEnergy, metrics
+    return metrics
 
 def calculateEnergy(scheduling):
-    totalEnergy = sum(int(pod['energy']) for pod in scheduling)
+    totalEnergy = sum(pod['energy'] for pod in scheduling)
     averageEnergy = totalEnergy / len(scheduling) if scheduling else 0
     return totalEnergy, averageEnergy
 
