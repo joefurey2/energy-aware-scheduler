@@ -22,8 +22,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 26,
-  "iteration": 1712759979845,
+  "id": 28,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -42,15 +41,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -73,9 +72,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.5",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": {
@@ -107,15 +108,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -138,9 +139,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.5.5",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": {
@@ -183,6 +186,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "watt",
             "axisPlacement": "left",
             "barAlignment": -1,
@@ -195,6 +201,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 0,
             "pointSize": 5,
@@ -216,15 +223,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -383,7 +390,7 @@
           },
           "editorMode": "code",
           "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_gpu_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
-          "hide": false,
+          "hide": true,
           "legendFormat": "{{pod_name}} / {{container_namespace}} / GPU",
           "range": true,
           "refId": "D"
@@ -404,6 +411,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "watt",
             "axisPlacement": "left",
             "barAlignment": -1,
@@ -416,6 +426,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 0,
             "pointSize": 5,
@@ -437,15 +448,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -546,7 +557,7 @@
         "x": 0,
         "y": 19
       },
-      "id": 20,
+      "id": 18,
       "options": {
         "legend": {
           "calcs": [
@@ -567,7 +578,7 @@
         {
           "datasource": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (instance) (irate(kepler_container_package_joules_total{container_namespace=~\"$namespace\", pod_name!=\"system_processes\", instance=~\"$instance\"}[1m]))",
+          "expr": "sum by (pod_name, instance) (irate(kepler_container_package_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\", instance=~\"kind-worker\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{pod_name}} / {{instance}} / PKG",
@@ -604,13 +615,13 @@
           },
           "editorMode": "code",
           "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_gpu_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
-          "hide": false,
+          "hide": true,
           "legendFormat": "{{pod_name}} / {{container_namespace}} / GPU",
           "range": true,
           "refId": "D"
         }
       ],
-      "title": "Node Power Consumption - All namespaces (W)",
+      "title": "Pod Power Consumption (W) on node: kind-worker",
       "type": "timeseries"
     },
     {
@@ -625,6 +636,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "watt",
             "axisPlacement": "left",
             "barAlignment": -1,
@@ -637,6 +651,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 0,
             "pointSize": 5,
@@ -658,15 +673,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -767,7 +782,7 @@
         "x": 0,
         "y": 29
       },
-      "id": 18,
+      "id": 19,
       "options": {
         "legend": {
           "calcs": [
@@ -788,7 +803,7 @@
         {
           "datasource": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (pod_name, instance) (irate(kepler_container_package_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\", instance=~\"kind-worker\"}[1m]))",
+          "expr": "(irate(kepler_container_package_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\", instance=~\"kind-worker2\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{pod_name}} / {{instance}} / PKG",
@@ -825,13 +840,13 @@
           },
           "editorMode": "code",
           "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_gpu_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
-          "hide": false,
+          "hide": true,
           "legendFormat": "{{pod_name}} / {{container_namespace}} / GPU",
           "range": true,
           "refId": "D"
         }
       ],
-      "title": "Pod Power Consumption (W) on node: kind-worker",
+      "title": "Pod Power Consumption (W) on Node: kind-worker2",
       "type": "timeseries"
     },
     {
@@ -846,6 +861,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "watt",
             "axisPlacement": "left",
             "barAlignment": -1,
@@ -858,6 +876,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 0,
             "pointSize": 5,
@@ -879,15 +898,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -988,7 +1007,7 @@
         "x": 0,
         "y": 39
       },
-      "id": 21,
+      "id": 20,
       "options": {
         "legend": {
           "calcs": [
@@ -1009,15 +1028,50 @@
         {
           "datasource": "prometheus",
           "editorMode": "code",
-          "expr": "(irate(kepler_container_package_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
+          "expr": "sum by (instance) (irate(kepler_container_package_joules_total{container_namespace=~\"$namespace\", pod_name!=\"system_processes\", instance=~\"$instance\"}[1m]))",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{pod_name}} / {{instance}} / PKG",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": "prometheus",
+          "editorMode": "code",
+          "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
+          "hide": true,
+          "interval": "",
+          "legendFormat": "{{pod_name}} / {{container_namespace}} / DRAM",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
+          "hide": true,
+          "interval": "",
+          "legendFormat": "{{pod_name}} / {{container_namespace}} / OTHER",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_gpu_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
+          "hide": true,
+          "legendFormat": "{{pod_name}} / {{container_namespace}} / GPU",
+          "range": true,
+          "refId": "D"
         }
       ],
-      "title": "Pod Power Consumption (W) in default",
+      "title": "Node Power Consumption - All namespaces (W)",
       "type": "timeseries"
     },
     {
@@ -1032,6 +1086,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "watt",
             "axisPlacement": "left",
             "barAlignment": -1,
@@ -1044,6 +1101,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 0,
             "pointSize": 5,
@@ -1065,15 +1123,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -1174,7 +1232,7 @@
         "x": 0,
         "y": 49
       },
-      "id": 19,
+      "id": 21,
       "options": {
         "legend": {
           "calcs": [
@@ -1195,50 +1253,15 @@
         {
           "datasource": "prometheus",
           "editorMode": "code",
-          "expr": "(irate(kepler_container_package_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\", instance=~\"kind-worker2\"}[1m]))",
+          "expr": "(irate(kepler_container_package_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{pod_name}} / {{instance}} / PKG",
+          "legendFormat": "{{pod_name}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": "prometheus",
-          "editorMode": "code",
-          "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "{{pod_name}} / {{container_namespace}} / DRAM",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "{{pod_name}} / {{container_namespace}} / OTHER",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "sum by (pod_name, container_namespace) (irate(kepler_container_gpu_joules_total{container_namespace=~\"default\", pod_name=~\"$pod\"}[1m]))",
-          "hide": false,
-          "legendFormat": "{{pod_name}} / {{container_namespace}} / GPU",
-          "range": true,
-          "refId": "D"
         }
       ],
-      "title": "Pod Power Consumption (W) on Node: kind-worker2",
+      "title": "Pod Power Consumption (W) in default",
       "type": "timeseries"
     },
     {
@@ -1253,6 +1276,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "watt",
             "axisPlacement": "left",
             "barAlignment": 0,
@@ -1265,6 +1291,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 0,
             "pointSize": 5,
@@ -1286,15 +1313,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -1448,6 +1475,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "kWh",
             "axisPlacement": "left",
             "barAlignment": 0,
@@ -1460,6 +1490,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 0,
             "pointSize": 5,
@@ -1481,15 +1512,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -1655,7 +1686,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1668,8 +1700,10 @@
       "id": 15,
       "options": {
         "displayMode": "gradient",
+        "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -1678,9 +1712,11 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
       },
-      "pluginVersion": "8.5.5",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": {
@@ -1700,8 +1736,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 36,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
@@ -1709,7 +1744,7 @@
         "current": {
           "selected": false,
           "text": "prometheus",
-          "value": "prometheus"
+          "value": "P1809F7CD0C75ACF3"
         },
         "hide": 0,
         "includeAll": false,
@@ -1885,13 +1920,13 @@
     ]
   },
   "time": {
-    "from": "2024-04-10T16:00:45.000Z",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Kepler Exporter Dashboard",
   "uid": "NhnADUW4zIBM",
-  "version": 9,
+  "version": 2,
   "weekStart": ""
 }

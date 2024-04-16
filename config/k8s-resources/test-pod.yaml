@@ -6,7 +6,6 @@ metadata:
   labels:
     name: testpod2
     scheduling: energy-aware
-  namespace: default
 spec:
   containers:
   - name: test
