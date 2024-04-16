@@ -101,8 +101,9 @@ def writeSchedulingToCSV(filename, schedulingType, scheduling):
 
         writer.writeheader()
         for numInstances, pods in enumerate(scheduling, start=1):
-            print(pod)
+            print(numInstances, pods)
             for pod in pods:
+                print(pod)
                 writer.writerow({
                     'schedulingType': schedulingType,
                     'numberOfInstances': numInstances,
