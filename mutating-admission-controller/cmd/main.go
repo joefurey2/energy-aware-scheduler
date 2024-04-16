@@ -61,6 +61,16 @@ func handleMutate(c *gin.Context) {
 	c.Writer.Write(mutated)
 }
 
+func resetInstanceCount(c *gin.Context) {
+	for node := range podCounts {
+		podCounts[node] = 0
+	}
+	totalInstances = 0
+
+	c.JSON(http.StatusOK, gin.H{"message": "Instance count reset to 0!"})
+}
+
+// Endpoint to recieve the optimal scheduling pattern
 func handleSchedule(c *gin.Context) {
 
 	var schedule map[int]map[string]int
@@ -87,7 +97,7 @@ func handleSchedule(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Schedule received successfully"})
 }
 
-// Endpoint to return current ranking of nodes stored in controller
+// Endpoint to return current optimal scheduling stored in controller
 func handleGetSchedule(c *gin.Context) {
 	rankingJSON, err := json.Marshal(optimalSchedule)
 	if err != nil {
@@ -101,7 +111,7 @@ func handleGetSchedule(c *gin.Context) {
 	c.Writer.Write(rankingJSON)
 }
 
-// Endpoint to return current ranking of nodes stored in controller
+// Endpoint to return current number of scheduled pods stored in controller
 func handleCurrentSchedule(c *gin.Context) {
     
 	info := ScheduleInfo{
