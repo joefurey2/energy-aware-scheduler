@@ -118,15 +118,17 @@ def main():
     config.load_kube_config()
     v1 = client.CoreV1Api()
 
+    podTemplate["metadata"]["labels"]["scheduling"] = f"energy-aware" 
+    energyAwareScheduling = runPods(v1, podTemplate, args.instances+1, "energy-aware") 
+    print(energyAwareScheduling)
+    
+    time.sleep(5)
 
     podTemplate["metadata"]["labels"]["scheduling"] = f"standard" 
     standardScheduling = runPods(v1, podTemplate, args.instances+1, "standard") 
     print(standardScheduling)
 
-    time.sleep(5)
-    podTemplate["metadata"]["labels"]["scheduling"] = f"energy-aware" 
-    energyAwareScheduling = runPods(v1, podTemplate, args.instances+1, "energy-aware") 
-    print(energyAwareScheduling)
+
 
     standardTotal, standardAverage = calculateEnergy(standardScheduling)
     energyAwareTotal, energyAwareAverage = calculateEnergy(energyAwareScheduling)
