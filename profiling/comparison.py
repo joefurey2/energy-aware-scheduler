@@ -102,6 +102,7 @@ def writeSchedulingToCSV(filename, schedulingType, scheduling):
         writer.writeheader()
         for numInstances, pods in enumerate(scheduling, start=1):
             for pod in pods:
+                print(pod)
                 writer.writerow({
                     'schedulingType': schedulingType,
                     'numberOfInstances': numInstances,
@@ -124,6 +125,7 @@ def main():
     standardScheduling = runPods(v1, podTemplate, args.instances+1, "standard") 
     print(standardScheduling)
 
+    time.sleep(5)
     podTemplate["metadata"]["labels"]["scheduling"] = f"energy-aware" 
     energyAwareScheduling = runPods(v1, podTemplate, args.instances+1, "energy-aware") 
     print(energyAwareScheduling)
