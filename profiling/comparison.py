@@ -94,13 +94,12 @@ def calculateEnergy(scheduling):
     averageEnergy = totalEnergy / len(scheduling) if scheduling else 0
     return totalEnergy, averageEnergy
 
-def writeSchedulingToCSV(filename, schedulingType, scheduling):
+def writeSchedulingToCSV(filename, schedulingType, scheduling, numInstances):
     with open(filename, 'a', newline='') as csvfile:
         fieldnames = ['schedulingType', 'numberOfInstances', 'podName', 'nodeName', 'energyConsumption']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-        writer.writeheader()
-        for numInstances, pod in enumerate(scheduling, start=1):
+        for pod in scheduling:
                 writer.writerow({
                     'schedulingType': schedulingType,
                     'numberOfInstances': numInstances,
@@ -122,7 +121,7 @@ def main():
     energyAwareScheduling = runPods(v1, podTemplate, args.instances+1, "energy-aware") 
     print(energyAwareScheduling)
     
-    time.sleep(5)
+    time.sleep(10)
 
     podTemplate["metadata"]["labels"]["scheduling"] = f"standard" 
     standardScheduling = runPods(v1, podTemplate, args.instances+1, "standard") 
@@ -136,8 +135,15 @@ def main():
     print(f"Standard scheduling: Total energy = {standardTotal}, Average energy = {standardAverage}")
     print(f"Energy-aware scheduling: Total energy = {energyAwareTotal}, Average energy = {energyAwareAverage}")
 
-    writeSchedulingToCSV('scheduling.csv', 'Standard', standardScheduling)
-    writeSchedulingToCSV('scheduling.csv', 'EnergyAware', energyAwareScheduling)
+    filename = f'{args.instances}-comparison.csv'
+
+    with open(filename, 'a', newline='') as csvfile:
+        fieldnames = ['schedulingType', 'numberOfInstances', 'podName', 'nodeName', 'energyConsumption']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+    writeSchedulingToCSV(filename, 'Standard', standardScheduling, args.instances)
+    writeSchedulingToCSV(filename, 'EnergyAware', energyAwareScheduling, args.instances)
 
 if __name__ == "__main__":
     main()
