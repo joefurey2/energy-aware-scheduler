@@ -9,8 +9,10 @@ This folder contains code to deploy my Mutating Admission controller
     - ```cd ./ssl```
     - ```bash genSSH.sh ```
     - This will generate a key and certificate to use
+- The default namespace needs to be MAC enabled so that pods are sent to the MAC
+    - ```kubectl label namespace default MAC=enabled```
 
-## Steps to set up and configure
+## Manual steps to set up and configure
 1. First, build the MAC docker image
     - ```build -t ma-controller:latest --rm .```
 2. (Optional) Load updated docker image into kind cluster
@@ -19,6 +21,13 @@ This folder contains code to deploy my Mutating Admission controller
     - ```kubectl apply -f MAC-deploy.yaml```
 4. Configure the cluster to forward requests to the controller
     - ```kubectl apply -f webhook-config.yaml```
+
+# Automated deployment
+
+An automated bash script has been configured to automate the deployment process and all steps above
+
+To run:
+- ```bash deploy-mac.sh```
 
 The MAC should now be set up and configured
 

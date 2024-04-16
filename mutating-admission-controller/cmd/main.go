@@ -139,7 +139,7 @@ func main() {
 	router.GET("/", handleRoot)
 	router.POST("/schedule", handleSchedule)
 	router.GET("/schedule", handleGetSchedule)
-	router.POST("/count", resetInstanceCount)
+	router.GET("/count", resetInstanceCount)
 	router.GET("/currentSchedule", handleCurrentSchedule)
 	router.POST("/mutate", handleMutate)
 
