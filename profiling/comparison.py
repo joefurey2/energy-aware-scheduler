@@ -4,6 +4,7 @@ from prometheus_api_client import PrometheusConnect
 import argparse
 import csv
 from kubernetes.client.rest import ApiException
+import requests
 
 config.load_kube_config()
 v1 = client.CoreV1Api()
@@ -42,6 +43,8 @@ podTemplate = {
         "restartPolicy": "Never"
     }
 }
+
+
 
 def getMetric(podName):
     prom = PrometheusConnect(url="http://localhost:9090", disable_ssl=True)
@@ -116,6 +119,9 @@ def main():
 
     config.load_kube_config()
     v1 = client.CoreV1Api()
+
+    url = "https://localhost:8443/count"
+    response = requests.post(url, verify=False)
 
     podTemplate["metadata"]["labels"]["scheduling"] = f"energy-aware" 
     energyAwareScheduling = runPods(v1, podTemplate, args.instances+1, "energy-aware") 
