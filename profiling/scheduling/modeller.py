@@ -70,10 +70,10 @@ def deletePod(v1, podName, namespace="default"):
     except client.exceptions.ApiException as e:
         print(f"Exception when calling CoreV1Api->delete_namespaced_pod: {e}")
 
-def runPods(v1, podTemplate, numInstances, nodes):
+def runPods(v1, podTemplate, startInstance, numInstances, nodes):
     metrics = {}
     allPodNames = {}
-    for i in range(1, numInstances):
+    for i in range(startInstance, numInstances):
         print(f"Testing {i} pods across {len(nodes)} nodes...")
         metrics[str(i)] = []
         for combination in itertools.combinations_with_replacement(nodes, i):
@@ -100,6 +100,10 @@ def runPods(v1, podTemplate, numInstances, nodes):
             for nodeName, podNames in allPodNames.items():
                 for podName in podNames:
                     energy = getMetric(podName)
+                    if energy == 0:
+                        print("kepler stopped working at ", i)
+                        print(metrics.items())
+                        return metrics
                     combinationKey = '-'.join(f"{nodeCounts.get(node, 0)}{node}" for node in nodes)
                     if combinationKey not in combinationMetrics:
                         combinationMetrics[combinationKey] = []
@@ -146,6 +150,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--instances', type=int, required=True)
     parser.add_argument('--nodes', nargs='+', required=True)
+    parser.add_argument('--start', type=int)
+
     args = parser.parse_args()
 
     nodes = args.nodes
@@ -156,8 +162,9 @@ def main():
 
     podTemplate["metadata"]["labels"]["test"] = f"full-profiling" 
 
-
-    metrics = runPods(v1, podTemplate, args.instances+1, nodes)  
+    start = args.start if args.start else 1
+    
+    metrics = runPods(v1, podTemplate, start, args.instances+1, nodes)  
     schedule = find_optimal_scheduling(metrics, nodes)
     print(schedule.items())
     for numInstances, combinations in metrics.items():
