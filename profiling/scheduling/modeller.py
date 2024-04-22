@@ -134,13 +134,6 @@ def find_optimal_scheduling(metrics, nodes):
                     optimal_combination = node_counts
         optimal_scheduling[numInstances] = optimal_combination
 
-    print("Sending schedule to controller....")
-    headers = {'Content-Type': 'application/json'}
-    response = requests.post('https://localhost:8443/schedule', headers=headers, data=json.dumps(optimal_scheduling), verify=False)
-
-    if response.status_code != 200:
-        print(f"POST request failed with status code {response.status_code}")
-
     return optimal_scheduling
 
 
@@ -207,6 +200,17 @@ def main():
                                 'podName': pod['podName'],
                                 'energyConsumption': pod['energy']
                             })
+
+        try:
+            print("Sending schedule to controller....")
+            headers = {'Content-Type': 'application/json'}
+            response = requests.post('https://localhost:8443/schedule', headers=headers, data=json.dumps(optimal_scheduling), verify=False)
+
+            if response.status_code != 200:
+                print(f"POST request failed with status code {response.status_code}")
+        except:
+            print("Couldnt connect to scheduling component!")
+
 
 if __name__ == "__main__":
     main()
