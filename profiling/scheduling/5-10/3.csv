@@ -1,0 +1,13 @@
+numberOfInstances,combination,nodeName,podName,energyConsumption
+3,3kind-worker-0kind-worker2,kind-worker,instances3-3kind-worker-0kind-worker2-pod1,125.184
+3,3kind-worker-0kind-worker2,kind-worker,instances3-3kind-worker-0kind-worker2-pod2,143.997
+3,3kind-worker-0kind-worker2,kind-worker,instances3-3kind-worker-0kind-worker2-pod3,151.446
+3,2kind-worker-1kind-worker2,kind-worker,instances3-2kind-worker-1kind-worker2-pod1,130.131
+3,2kind-worker-1kind-worker2,kind-worker,instances3-2kind-worker-1kind-worker2-pod2,150.306
+3,2kind-worker-1kind-worker2,kind-worker2,instances3-2kind-worker-1kind-worker2-pod3,124.149
+3,1kind-worker-2kind-worker2,kind-worker,instances3-1kind-worker-2kind-worker2-pod1,135.969
+3,1kind-worker-2kind-worker2,kind-worker2,instances3-1kind-worker-2kind-worker2-pod2,114.831
+3,1kind-worker-2kind-worker2,kind-worker2,instances3-1kind-worker-2kind-worker2-pod3,140.172
+3,0kind-worker-3kind-worker2,kind-worker2,instances3-0kind-worker-3kind-worker2-pod1,120.543
+3,0kind-worker-3kind-worker2,kind-worker2,instances3-0kind-worker-3kind-worker2-pod2,145.275
+3,0kind-worker-3kind-worker2,kind-worker2,instances3-0kind-worker-3kind-worker2-pod3,151.59
