@@ -1,3 +1,0 @@
-numberOfInstances,combination,nodeName,podName,energyConsumption
-1,1kind-worker-0kind-worker2,kind-worker,instances1-1kind-worker-0kind-worker2-pod1,146.703
-1,0kind-worker-1kind-worker2,kind-worker2,instances1-0kind-worker-1kind-worker2-pod1,141.192
