@@ -42,3 +42,14 @@ EnergyAware,5,energy-aware-pod-2,kind-worker2,111.567
 EnergyAware,5,energy-aware-pod-3,kind-worker2,98.583
 EnergyAware,5,energy-aware-pod-4,kind-worker2,125.88
 EnergyAware,5,energy-aware-pod-5,kind-worker,142.428
+schedulingType,numberOfInstances,podName,nodeName,energyConsumption
+Standard,5,standard-pod-1,kind-worker2,107.226
+Standard,5,standard-pod-2,kind-worker,132.621
+Standard,5,standard-pod-3,kind-worker2,136.398
+Standard,5,standard-pod-4,kind-worker,119.025
+Standard,5,standard-pod-5,kind-worker2,149.607
+EnergyAware,5,energy-aware-pod-1,kind-worker,76.617
+EnergyAware,5,energy-aware-pod-2,kind-worker2,134.733
+EnergyAware,5,energy-aware-pod-3,kind-worker2,148.524
+EnergyAware,5,energy-aware-pod-4,kind-worker,131.448
+EnergyAware,5,energy-aware-pod-5,kind-worker2,152.469
