@@ -145,7 +145,7 @@ def main():
         time.sleep(10)
 
         podTemplate["metadata"]["labels"]["scheduling"] = f"standard" 
-        standardScheduling = runPods(v1, podTemplate, currentInstances, "standard") 
+        standardScheduling = runPods(v1, podTemplate, currentInstances+1, "standard") 
         print(standardScheduling)
 
         standardTotal, standardAverage = calculateEnergy(standardScheduling)
