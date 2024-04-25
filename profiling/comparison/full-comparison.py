@@ -139,7 +139,7 @@ def main():
         requests.post(url, verify=False)
 
         podTemplate["metadata"]["labels"]["scheduling"] = f"energy-aware" 
-        energyAwareScheduling = runPods(v1, podTemplate, currentInstances, "energy-aware") 
+        energyAwareScheduling = runPods(v1, podTemplate, currentInstances+1, "energy-aware") 
         print(energyAwareScheduling)
         
         time.sleep(10)
