@@ -154,8 +154,8 @@ def main():
         print(f"Standard scheduling: Total energy = {standardTotal}, Average energy = {standardAverage}")
         print(f"Energy-aware scheduling: Total energy = {energyAwareTotal}, Average energy = {energyAwareAverage}")
 
-        writeSchedulingToCSV(filename, 'Standard', standardScheduling, args.instances)
-        writeSchedulingToCSV(filename, 'EnergyAware', energyAwareScheduling, args.instances)
+        writeSchedulingToCSV(filename, 'Standard', standardScheduling, currentInstances)
+        writeSchedulingToCSV(filename, 'EnergyAware', energyAwareScheduling, currentInstances)
 
 if __name__ == "__main__":
     main()
