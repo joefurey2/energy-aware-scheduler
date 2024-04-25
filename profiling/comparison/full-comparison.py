@@ -131,6 +131,9 @@ def main():
         writer.writeheader()
 
     for currentInstances in range(1, args.instances+1):
+        url = "https://localhost:8443/count"
+        requests.post(url, verify=False)
+
         podTemplate["metadata"]["labels"]["scheduling"] = f"energy-aware" 
         energyAwareScheduling = runPods(v1, podTemplate, currentInstances, "energy-aware") 
         print(energyAwareScheduling)
@@ -138,7 +141,7 @@ def main():
         time.sleep(10)
 
         podTemplate["metadata"]["labels"]["scheduling"] = f"standard" 
-        standardScheduling = runPods(v1, podTemplate, args.instances+1, "standard") 
+        standardScheduling = runPods(v1, podTemplate, currentInstances, "standard") 
         print(standardScheduling)
 
         standardTotal, standardAverage = calculateEnergy(standardScheduling)
