@@ -5,6 +5,7 @@ import argparse
 import csv
 from kubernetes.client.rest import ApiException
 import requests
+import urllib3
 
 config.load_kube_config()
 v1 = client.CoreV1Api()
@@ -119,6 +120,9 @@ def main():
 
     config.load_kube_config()
     v1 = client.CoreV1Api()
+
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
     url = "https://localhost:8443/count"
     response = requests.post(url, verify=False)
