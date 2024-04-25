@@ -88,7 +88,7 @@ def runPods(v1, podTemplate, numInstances, schedulingType):
         if nodeName is not None:
             energy = getMetric(podName)
             metrics.append({"podName": podName, "nodeName": nodeName, "energy": energy})
-        # deletePod(v1, podName)
+        deletePod(v1, podName)
 
     return metrics
 
